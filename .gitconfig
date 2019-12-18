@@ -3,3 +3,5 @@
 	name = Maddin-619
 [core]
 	editor = vim
+[credential]
+	helper = cache
