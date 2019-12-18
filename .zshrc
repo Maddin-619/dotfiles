@@ -79,20 +79,23 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 VSCODE=code-insiders
 plugins=(
-  git
-  vi-mode
-  vscode
   docker-compose
   docker
+  git
+  git-flow
+  jira
   node
+  mvn
   npm
   nvm
-  mvn
   pip
   python
   sudo
-  yarn
+  systemd
+  vi-mode
+  vscode
   web-search
+  yarn
 )
 
 source $ZSH/oh-my-zsh.sh
