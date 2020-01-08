@@ -9,7 +9,7 @@ fi
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/martin/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -115,6 +115,10 @@ else
   export EDITOR='nvim'
 fi
 
+if grep -q Microsoft /proc/version; then
+  export DOCKER_HOST="tcp://localhost:2375"
+fi
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -127,7 +131,7 @@ fi
 alias zshconfig="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
 alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
-alias config='/usr/bin/git --git-dir=/home/martin/dotfiles/ --work-tree=/home/martin'
+alias config="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
 alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias grep='grep --colour=auto'
