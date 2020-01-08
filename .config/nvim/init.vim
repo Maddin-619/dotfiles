@@ -29,10 +29,11 @@ Plug 'terryma/vim-expand-region' " Allows you to visually select increasingly la
 Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for Vim, CTRL+N is remapped to CTRL+S (due to YankRing)
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
+Plug 'idanarye/vim-merginal'
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
 Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, changes and deletes
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
-"Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 Plug 'morhetz/gruvbox' " theme
 
@@ -62,7 +63,7 @@ au FocusGained,BufEnter * checktime
 let mapleader = ","
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <leader>w :Prettier<cr>:w!<cr>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
@@ -153,9 +154,10 @@ if has("gui_macvim")
     autocmd GUIEnter * set vb t_vb=
 endif
 
-
 " Add a bit extra margin to the left
 set foldcolumn=1
+
+map <leader>tt :belowright 10split term://zsh<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -311,6 +313,7 @@ set laststatus=2
 
 " Format the status line
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -429,6 +432,92 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+" Creates a floating window with a most recent buffer to be used
+function! CreateCenteredFloatingWindow()
+    let width = float2nr(&columns * 0.6)
+    let height = float2nr(&lines * 0.6)
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    autocmd BufWipeout <buffer> call CleanupBuffer(s:buf)
+    tnoremap <buffer> <silent> <Esc> <C-\><C-n><CR>:call DeleteUnlistedBuffers()<CR>
+endfunction
+
+"##############################################################################
+" Terminal Handling
+"##############################################################################
+
+" Set login shell for :terminal command so aliases work
+set shell=/usr/bin/zsh
+
+" When term starts, auto go into insert mode
+autocmd TermOpen * startinsert
+
+" Turn off line numbers etc
+autocmd TermOpen * setlocal listchars= nonumber norelativenumber
+
+function! ToggleTerm(cmd)
+    if empty(bufname(a:cmd))
+        call CreateCenteredFloatingWindow()
+        call termopen(a:cmd, { 'on_exit': function('OnTermExit') })
+    else
+        call DeleteUnlistedBuffers()
+    endif
+endfunction
+
+function! ToggleLazyGit()
+    call ToggleTerm('lazygit')
+endfunction
+
+function! ToggleScratchTerm()
+    call ToggleTerm('zsh')
+endfunction
+
+function! OnTermExit(job_id, code, event) dict
+    if a:code == 0
+        call DeleteUnlistedBuffers()
+    endif
+endfunction
+
+function! DeleteUnlistedBuffers()
+    for n in nvim_list_bufs()
+        if ! buflisted(n)
+            let name = bufname(n)
+            if name == '[Scratch]' ||
+              \ matchend(name, ":zsh") != -1 ||
+              \ matchend(name, ":lazygit") != -1 ||
+              \ matchend(name, ":tmuxinator-fzf-start.sh") != -1
+                call CleanupBuffer(n)
+            endif
+        endif
+    endfor
+endfunction
+
+function! CleanupBuffer(buf)
+    if bufexists(a:buf)
+        silent execute 'bwipeout! '.a:buf
+    endif
+endfunction
+
+" Open lazygit
+nnoremap <silent> <Leader>' :call ToggleLazyGit()<CR>
+" Open scratch term
+nnoremap <silent> <Leader>s :call ToggleScratchTerm()<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GUI related
@@ -924,7 +1013,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Remap for rename current word
 nmap <F2> <Plug>(coc-rename)
