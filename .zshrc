@@ -119,6 +119,10 @@ if grep -q Microsoft /proc/version; then
   export DOCKER_HOST="tcp://localhost:2375"
 fi
 
+export JIRA_URL="https://jira.ite-si.de"
+export JIRA_NAME="mbrenner"
+export JIRA_PREFIX="IIOT-"
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
