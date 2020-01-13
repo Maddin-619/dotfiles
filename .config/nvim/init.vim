@@ -35,7 +35,6 @@ Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, chang
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
-" Plug 'morhetz/gruvbox' " theme
 Plug 'joshdick/onedark.vim'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
