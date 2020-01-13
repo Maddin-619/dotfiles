@@ -35,11 +35,14 @@ Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, chang
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
-Plug 'morhetz/gruvbox' " theme
+" Plug 'morhetz/gruvbox' " theme
+Plug 'joshdick/onedark.vim'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 
 Plug 'liuchengxu/vim-which-key'
+
+Plug 'vim-vdebug/vdebug'
 
 " Initialize plugin system
 call plug#end()
@@ -173,7 +176,8 @@ endif
 try
     " colorscheme desert
     " colorscheme peaksea
-    colorscheme gruvbox
+    " colorscheme gruvbox
+    colorscheme onedark
 catch
 endtry
 
