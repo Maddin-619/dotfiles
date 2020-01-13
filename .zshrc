@@ -122,6 +122,7 @@ fi
 export JIRA_URL="https://jira.ite-si.de"
 export JIRA_NAME="mbrenner"
 export JIRA_PREFIX="IIOT-"
+export PATH=$PATH:$HOME/.local/bin
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
