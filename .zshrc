@@ -126,6 +126,8 @@ export JIRA_NAME="mbrenner"
 export JIRA_PREFIX="IIOT-"
 export PATH=$PATH:$HOME/.local/bin
 
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
