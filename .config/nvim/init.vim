@@ -22,6 +22,7 @@ Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that i
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
+Plug 'unblevable/quick-scope'
 
 Plug 'tpope/vim-commentary' " Comment stuff out. Use gcc to comment out a line (takes a count), gc to comment out the target of a motion. gcu uncomments a set of adjacent commented lines.
 Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
@@ -703,8 +704,6 @@ au FileType python syn keyword pythonDecorator True None False self
 
 au BufNewFile,BufRead *.jinja set syntax=htmljinja
 au BufNewFile,BufRead *.mako set ft=mako
-
-au FileType python map <buffer> F :set foldmethod=indent<cr>
 
 au FileType python inoremap <buffer> $r return 
 au FileType python inoremap <buffer> $i import 
