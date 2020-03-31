@@ -39,6 +39,7 @@ Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
 Plug 'morhetz/gruvbox'
+Plug 'ap/vim-css-color'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 Plug 'jparise/vim-graphql'
@@ -544,6 +545,7 @@ elseif has("linux")
     set clipboard=unnamedplus
 elseif has("unix")
     set gfn=Monospace\ 11
+    set clipboard=unnamedplus
 endif
 
 let uname = substitute(system('uname'),'\n','','')
