@@ -46,6 +46,8 @@ Plug 'pangloss/vim-javascript'
 Plug 'liuchengxu/vim-which-key'
 
 Plug 'vim-vdebug/vdebug'
+Plug 'lusis/confluence-vim'
+Plug 'diepm/vim-rest-console'
 
 " Initialize plugin system
 call plug#end()
@@ -200,7 +202,6 @@ set encoding=utf8
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -220,8 +221,8 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 " Linebreak on 500 characters
 set lbr
@@ -529,17 +530,27 @@ nnoremap <silent> <Leader>s :call ToggleScratchTerm()<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GUI related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set font according to system
+" Set font and clipboard copy according to system
 if has("mac") || has("macunix")
     set gfn=IBM\ Plex\ Mono:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
 elseif has("win16") || has("win32")
     set gfn=IBM\ Plex\ Mono:h14,Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
+    set clipboard=unnamed
 elseif has("gui_gtk2")
     set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
 elseif has("linux")
     set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
+    set clipboard=unnamedplus
 elseif has("unix")
     set gfn=Monospace\ 11
+endif
+
+let uname = substitute(system('uname'),'\n','','')
+if uname == 'Linux'
+    let lines = readfile("/proc/version")
+    if lines[0] =~ "Microsoft"
+      set clipboard=unnamed
+    endif
 endif
 
 " Disable scrollbars (real hackers don't use scrollbars for navigation!)
@@ -745,6 +756,10 @@ autocmd BufRead *.twig set syntax=html filetype=html
 let vim_markdown_folding_disabled = 1
 
 
+""""""""""""""""""""""""""""""
+" => confluence-vim
+""""""""""""""""""""""""""""""
+let g:confluence_url = 'https://confluence.ite-si.de/rest/api/content'
 
 
 """"""""""""""""""""""""""""""
