@@ -44,6 +44,7 @@ Plug 'ap/vim-css-color'
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 Plug 'jparise/vim-graphql'
 Plug 'pangloss/vim-javascript'
+Plug 'Quramy/vim-js-pretty-template'
 
 Plug 'liuchengxu/vim-which-key'
 
@@ -168,6 +169,8 @@ endif
 " set foldcolumn=1
 
 map <leader>tt :belowright 10split term://zsh<cr>
+
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -363,7 +366,7 @@ endif
 " => Spell checking
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+map <leader>ss :setlocal spell! spelllang=en_us,de_de<cr>
 
 " Shortcuts using <leader>
 map <leader>sn ]s
@@ -720,6 +723,13 @@ au FileType python map <buffer> <leader>D ?def
 """"""""""""""""""""""""""""""
 " => JavaScript section
 """""""""""""""""""""""""""""""
+" Register tag name associated the filetype
+call jspretmpl#register_tag('gql', 'graphql')
+
+autocmd FileType javascript JsPreTmpl
+autocmd FileType javascript.jsx JsPreTmpl
+autocmd FileType typescript JsPreTmpl
+
 
 """"""""""""""""""""""""""""""
 " => CoffeeScript section
