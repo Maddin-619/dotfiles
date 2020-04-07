@@ -22,7 +22,7 @@ Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that i
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
-Plug 'unblevable/quick-scope'
+"Plug 'unblevable/quick-scope'
 
 Plug 'tpope/vim-commentary' " Comment stuff out. Use gcc to comment out a line (takes a count), gc to comment out the target of a motion. gcu uncomments a set of adjacent commented lines.
 Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
@@ -32,14 +32,17 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
 Plug 'idanarye/vim-merginal'
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
-Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, changes and deletes
+"Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, changes and deletes
+Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/neoyank.vim'
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
 Plug 'morhetz/gruvbox'
-Plug 'ap/vim-css-color'
+"Plug 'ap/vim-css-color'
+Plug 'gko/vim-coloresque'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 Plug 'jparise/vim-graphql'
@@ -171,6 +174,7 @@ endif
 map <leader>tt :belowright 10split term://zsh<cr>
 
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+let g:qs_lazy_highlight = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -277,7 +281,7 @@ nnoremap <M-k> <C-w>k
 nnoremap <M-l> <C-w>l
 
 " Exit terminal mode
-tnoremap <Esc> <C-\><C-n>
+tnoremap <M-q> <C-\><C-n>
 
 " Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
@@ -468,7 +472,7 @@ function! CreateCenteredFloatingWindow()
     let opts.width -= 4
     call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
     autocmd BufWipeout <buffer> call CleanupBuffer(s:buf)
-    tnoremap <buffer> <silent> <Esc> <C-\><C-n><CR>:call DeleteUnlistedBuffers()<CR>
+    tnoremap <buffer> <silent> <M-q> <C-\><C-n><CR>:call DeleteUnlistedBuffers()<CR>
 endfunction
 
 "##############################################################################
@@ -791,12 +795,27 @@ map <leader>f :MRU<CR>
 
 
 """"""""""""""""""""""""""""""
-" => YankStack
+" => NeoYank / denite
 """"""""""""""""""""""""""""""
-let g:yankstack_yank_keys = ['y', 'd']
+" Define mappings
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
 
-nmap <C-p> <Plug>yankstack_substitute_older_paste
-nmap <C-n> <Plug>yankstack_substitute_newer_paste
+nmap <M-p> :Denite neoyank -winheight=10<CR>
+nmap <M-o> :Denite buffer -winheight=10<CR>
 
 
 """"""""""""""""""""""""""""""
