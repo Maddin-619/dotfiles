@@ -7,16 +7,13 @@ call plug#begin('~/.vim/plugged')
 Plug 'mileszs/ack.vim' " Vim plugin for the_silver_searcher (ag) or ack -- a wicked fast grep
 Plug 'vim-scripts/bufexplorer.zip' " Quickly and easily switch between buffers. This plugin can be opened with <leader+o>
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Language Server Intelisense
-Plug 'dense-analysis/ale' " Syntax and lint checking for vim (ALE requires NeoVim >= 0.2.0 or Vim 8 with +timers +job +channel)
 Plug 'itchyny/lightline.vim' " A light and configurable statusline/tabline for Vim
-Plug 'maximbaz/lightline-ale'
-Plug 'scrooloose/nerdtree' " A tree explorer plugin for vim
-Plug 'scrooloose/nerdcommenter'
+Plug 'preservim/nerdtree' " A tree explorer plugin for vim
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'ryanoasis/vim-devicons'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'vim-scripts/mru.vim' " Plugin to manage Most Recently Used (MRU) files. This plugin can be opened with <leader+f>
 Plug 'amix/open_file_under_cursor.vim' " Open file under cursor when pressing gf
+Plug 'unblevable/quick-scope'
 " Snippet
 Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that implements some of TextMate's snippets features in Vim
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -30,9 +27,7 @@ Plug 'terryma/vim-expand-region' " Allows you to visually select increasingly la
 Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for Vim, CTRL+N is remapped to CTRL+S (due to YankRing)
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
-Plug 'idanarye/vim-merginal'
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
-"Plug 'maxbrunsfeld/vim-yankstack' " Maintains a history of previous yanks, changes and deletes
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neoyank.vim'
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
@@ -41,7 +36,6 @@ Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
 Plug 'morhetz/gruvbox'
-"Plug 'ap/vim-css-color'
 Plug 'gko/vim-coloresque'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
@@ -52,8 +46,9 @@ Plug 'Quramy/vim-js-pretty-template'
 Plug 'liuchengxu/vim-which-key'
 
 Plug 'vim-vdebug/vdebug'
-Plug 'lusis/confluence-vim'
 Plug 'diepm/vim-rest-console'
+
+Plug 'ryanoasis/vim-devicons' " Adds icons to plugins
 
 " Initialize plugin system
 call plug#end()
@@ -772,12 +767,6 @@ let vim_markdown_folding_disabled = 1
 
 
 """"""""""""""""""""""""""""""
-" => confluence-vim
-""""""""""""""""""""""""""""""
-let g:confluence_url = 'https://confluence.ite-si.de/rest/api/content'
-
-
-""""""""""""""""""""""""""""""
 " => bufExplorer plugin
 """"""""""""""""""""""""""""""
 let g:bufExplorerDefaultHelp=0
@@ -941,29 +930,36 @@ let g:closetag_shortcut = '>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => lightline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
+
+function! MyFiletype()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
+endfunction
+  
+function! MyFileformat()
+  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
+endfunction
+
 let g:lightline = {
       \ 'colorscheme': 'gruvbox',
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'filename', 'modified'] ],
-      \   'right': [ [ 'lineinfo' ], ['percent'], [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ] ]
+      \   'right': [ [ 'lineinfo' ], ['percent'], ['currentfunction', 'cocstatus'] ]
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
       \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
       \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
       \ },
-      \ 'component_type': {
-      \     'linter_checking': 'left',
-      \     'linter_warnings': 'warning',
-      \     'linter_errors': 'error',
-      \     'linter_ok': 'left',
-      \ },
-      \ 'component_expand': {
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status',
+      \   'currentfunction': 'CocCurrentFunction',
+      \   'filetype': 'MyFiletype',
+      \   'fileformat': 'MyFileformat'
       \ },
       \ 'component_visible_condition': {
       \   'readonly': '(&filetype!="help"&& &readonly)',
@@ -973,29 +969,6 @@ let g:lightline = {
       \ 'separator': { 'left': ' ', 'right': ' ' },
       \ 'subseparator': { 'left': ' ', 'right': ' ' }
       \ }
-
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_warnings = "\uf071"
-let g:lightline#ale#indicator_errors = "\uf05e"
-let g:lightline#ale#indicator_ok = "\uf00c"
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ale (syntax checker and linter)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'python': ['autopep8'],
-\   'go': ['go', 'golint', 'errcheck']
-\}
-
-" nmap <silent> <leader>a <Plug>(ale_next_wrap)
-
-" Disabling highlighting
-let g:ale_set_highlights = 0
-
-" Only run linting when saving the file
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
