@@ -847,8 +847,8 @@ map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 
 " open NERDTree automatically
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * NERDTree
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * NERDTree
 
 " close if the only opend file
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -1139,7 +1139,7 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Git gutter (Git diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:gitgutter_enabled=0
+let g:gitgutter_enabled=1
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 set updatetime=300
 
