@@ -19,7 +19,6 @@ Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that i
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
-"Plug 'unblevable/quick-scope'
 
 Plug 'tpope/vim-commentary' " Comment stuff out. Use gcc to comment out a line (takes a count), gc to comment out the target of a motion. gcu uncomments a set of adjacent commented lines.
 Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
@@ -36,7 +35,11 @@ Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
 Plug 'morhetz/gruvbox'
-Plug 'gko/vim-coloresque'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'kristijanhusak/vim-hybrid-material'
+Plug 'mhartington/oceanic-next'
+Plug 'rakr/vim-one'
+Plug 'ap/vim-css-color'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 Plug 'jparise/vim-graphql'
@@ -159,11 +162,6 @@ set novisualbell
 set t_vb=
 set tm=500
 
-" Properly disable sound on errors on MacVim
-if has("gui_macvim")
-    autocmd GUIEnter * set vb t_vb=
-endif
-
 " Add a bit extra margin to the left
 " set foldcolumn=1
 
@@ -178,13 +176,19 @@ let g:qs_lazy_highlight = 1
 " Enable syntax highlighting
 syntax on 
 
+set t_Co=256
+
 set background=dark
 let g:gruvbox_italic=1
 let g:gruvbox_invert_selection=0
 try
-    colorscheme gruvbox
+    colorscheme OceanicNext
 catch
 endtry
+
+hi! Normal guibg=NONE ctermbg=NONE
+hi! NonText guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
+hi! EndOfBuffer guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 
 let g:gruvbox_contrast_dark = 'soft'
 
@@ -843,8 +847,11 @@ map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 
 " open NERDTree automatically
-" autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * NERDTree
+
+" open NERDTree at start up if no file were specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " close if the only opend file
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -865,21 +872,26 @@ let g:NERDTreeColorMapCustom = {
 
 " sync open file with NERDTree
 " " Check if NERDTree is open or active
-function! IsNERDTreeOpen()        
+
+function! s:isNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
-" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
-" file, and we're not in vimdiff
-function! SyncTree()
-  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
-    NERDTreeFind
-    wincmd p
+" calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
+function! s:syncTree()
+  if &modifiable && s:isNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff && bufname('%') !~# 'NERD_tree'
+    try
+      NERDTreeFind
+      if bufname('%') =~# 'NERD_tree'
+        "setlocal nocursorline
+        setlocal nocursorcolumn
+        wincmd p
+      endif
+    endtry
   endif
 endfunction
 
-" Highlight currently open buffer in NERDTree
-autocmd BufEnter * call SyncTree()
+autocmd BufEnter * silent! call s:syncTree()
 
 let g:NERDTreeFileExtensionHighlightFullName = 1
 let g:NERDTreeExactMatchHighlightFullName = 1
@@ -940,7 +952,7 @@ function! MyFileformat()
 endfunction
 
 let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
       \             ['fugitive', 'readonly', 'filename', 'modified'] ],
@@ -963,7 +975,11 @@ let g:lightline = {
       \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
       \ },
       \ 'separator': { 'left': ' ', 'right': ' ' },
-      \ 'subseparator': { 'left': ' ', 'right': ' ' }
+      \ 'subseparator': { 'left': ' ', 'right': ' ' },
+      \ 'tabline': {
+		  \   'left': [ [ 'tabs' ] ],
+		  \   'right': [  ]
+      \ }
       \ }
 
 
