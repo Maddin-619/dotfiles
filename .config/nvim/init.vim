@@ -49,6 +49,7 @@ Plug 'vim-vdebug/vdebug'
 Plug 'diepm/vim-rest-console'
 
 Plug 'ryanoasis/vim-devicons' " Adds icons to plugins
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 " Initialize plugin system
 call plug#end()
@@ -176,11 +177,6 @@ let g:qs_lazy_highlight = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax on 
-
-" Enable 256 colors palette in Gnome Terminal
-if $COLORTERM == 'hyper'
-    set t_Co=256
-endif
 
 set background=dark
 let g:gruvbox_italic=1
