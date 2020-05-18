@@ -12,8 +12,10 @@ Plug 'preservim/nerdtree' " A tree explorer plugin for vim
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'vim-scripts/mru.vim' " Plugin to manage Most Recently Used (MRU) files. This plugin can be opened with <leader+f>
+Plug 'voldikss/vim-floaterm'
 Plug 'amix/open_file_under_cursor.vim' " Open file under cursor when pressing gf
 Plug 'unblevable/quick-scope'
+
 " Snippet
 Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that implements some of TextMate's snippets features in Vim
 Plug 'MarcWeber/vim-addon-mw-utils'
@@ -167,9 +169,6 @@ set tm=500
 
 map <leader>tt :belowright 10split term://zsh<cr>
 
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-let g:qs_lazy_highlight = 1
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -189,6 +188,7 @@ endtry
 hi! Normal guibg=NONE ctermbg=NONE
 hi! NonText guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 hi! EndOfBuffer guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
+hi! LineNr ctermbg=NONE guibg=NONE
 
 let g:gruvbox_contrast_dark = 'soft'
 
@@ -483,54 +483,6 @@ autocmd TermOpen * startinsert
 " Turn off line numbers etc
 autocmd TermOpen * setlocal listchars= nonumber norelativenumber
 
-function! ToggleTerm(cmd)
-    if empty(bufname(a:cmd))
-        call CreateCenteredFloatingWindow()
-        call termopen(a:cmd, { 'on_exit': function('OnTermExit') })
-    else
-        call DeleteUnlistedBuffers()
-    endif
-endfunction
-
-function! ToggleLazyGit()
-    call ToggleTerm('lazygit')
-endfunction
-
-function! ToggleScratchTerm()
-    call ToggleTerm('zsh')
-endfunction
-
-function! OnTermExit(job_id, code, event) dict
-    if a:code == 0
-        call DeleteUnlistedBuffers()
-    endif
-endfunction
-
-function! DeleteUnlistedBuffers()
-    for n in nvim_list_bufs()
-        if ! buflisted(n)
-            let name = bufname(n)
-            if name == '[Scratch]' ||
-              \ matchend(name, ":zsh") != -1 ||
-              \ matchend(name, ":lazygit") != -1 ||
-              \ matchend(name, ":tmuxinator-fzf-start.sh") != -1
-                call CleanupBuffer(n)
-            endif
-        endif
-    endfor
-endfunction
-
-function! CleanupBuffer(buf)
-    if bufexists(a:buf)
-        silent execute 'bwipeout! '.a:buf
-    endif
-endfunction
-
-" Open lazygit
-nnoremap <silent> <Leader>' :call ToggleLazyGit()<CR>
-" Open scratch term
-nnoremap <silent> <Leader>s :call ToggleScratchTerm()<CR>
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GUI related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -745,12 +697,9 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 """"""""""""""""""""""""""""""
 " => Shell section
 """"""""""""""""""""""""""""""
-if exists('$TMUX') 
-    if has('nvim')
-        set termguicolors
-    else
-        set term=screen-256color 
-    endif
+" checks if your terminal has 24-bit color support
+if (has("termguicolors"))
+    set termguicolors
 endif
 
 
@@ -833,6 +782,35 @@ let g:user_zen_mode='a'
 """"""""""""""""""""""""""""""
 let Grep_Skip_Dirs = 'RCS CVS SCCS .svn generated'
 set grepprg=/bin/grep\ -nH
+
+
+""""""""""""""""""""""""""""""
+" => Quickscope
+""""""""""""""""""""""""""""""
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+highlight QuickScopePrimary guifg='#00C7DF' gui=underline ctermfg=155 cterm=underline
+highlight QuickScopeSecondary guifg='#eF5F70' gui=underline ctermfg=81 cterm=underline
+
+let g:qs_max_chars=150
+let g:qs_lazy_highlight = 1
+
+
+""""""""""""""""""""""""""""""
+" => Floaterm
+""""""""""""""""""""""""""""""
+let g:floaterm_gitcommit='floaterm'
+let g:floaterm_autoinsert=1
+let g:floaterm_width=0.8
+let g:floaterm_height=0.8
+let g:floaterm_wintitle=0
+let g:floaterm_autoclose=2
+
+" Open lazygit
+nnoremap <silent> <Leader>' :FloatermNew lazygit<CR>
+" Open lazydocker
+nnoremap <silent> <Leader>d :FloatermNew lazydocker<CR>
+" Open scratch term
+nnoremap <silent> <Leader>s :FloatermNew<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1035,6 +1013,7 @@ let g:coc_global_extensions = [
   \ 'coc-eslint', 
   \ 'coc-prettier', 
   \ 'coc-json', 
+  \ 'coc-python', 
   \ ]
 
 " Use tab for trigger completion with characters ahead and navigate.
@@ -1152,6 +1131,6 @@ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 " => Git gutter (Git diff)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=1
-nnoremap <silent> <leader>d :GitGutterToggle<cr>
+nnoremap <silent> <leader>tg :GitGutterToggle<cr>
 set updatetime=300
 
