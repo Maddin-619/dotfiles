@@ -32,7 +32,6 @@ from libqtile.config import Key, Screen, Group, Drag, Click
 from libqtile.command import lazy
 from libqtile.log_utils import logger
 from libqtile import layout, bar, widget, hook
-from custom_widgets import Backlight
 
 from typing import List  # noqa: F401
 
@@ -42,7 +41,20 @@ myTerm = "alacritty"                                    # My terminal of choice
 # The Qtile config file location
 myConfig = "/home/martin/.config/qtile/config.py"
 
+batteryNames = ['BAT0', 'cw2015-battery']
+backlightNames = ['intel_backlight', 'edp-backlight']
+
 #### HELPER FUNCTIONS ####
+
+batteryName = ''
+for name in batteryNames:
+    if os.path.exists("/sys/class/power_supply/" + name):
+        batteryName = name
+
+backlightName= ''
+for name in backlightNames:
+    if os.path.exists("/sys/class/backlight/" + name):
+        backlightName = name
 
 
 def get_num_monitors():
@@ -67,6 +79,18 @@ def get_num_monitors():
         return 1
     else:
         return num_monitors
+
+def getBatteryCapacity():
+    icons = ['', '', '', '', '', '', '', '', '', '']
+    capacity = int(subprocess.check_output(["cat", "/sys/class/power_supply/" + batteryName + "/capacity"]).decode("utf-8").strip())
+    charging = subprocess.check_output(["cat", "/sys/class/power_supply/" + batteryName + "/status"]).decode("utf-8").strip()
+    icon = ''
+    if charging == 'Charging':
+        icon = ''
+    else:
+        icon = icons[capacity // 10]
+    return '{0} {1} %'.format(icon, capacity)
+
 
 
 ##### KEYBINDINGS #####
@@ -207,12 +231,12 @@ keys = [
     ),
     Key(
         [], "XF86MonBrightnessUp",
-        lazy.spawn('/home/martin/.config/qtile/changeBrightness.sh up')
+        lazy.spawn('light -A 10')
     ),
     Key(
         [], "XF86MonBrightnessDown",
         lazy.spawn(
-            '/home/martin/.config/qtile/changeBrightness.sh down')
+            'light -U 10')
     ),
 ]
 
@@ -327,6 +351,12 @@ def init_widgets_list():
             background=colors[0],
             padding=5
         ),
+        widget.Notify(
+            padding=5,
+            default_timeout=5,
+            background=colors[5],
+            foreground=colors[2]
+        ),
         widget.TextBox(
             text='\ue0b2',
             font='Hack Nerd Font',
@@ -401,7 +431,6 @@ def init_widgets_list():
             fontsize=14
         ),
         widget.Net(
-            interface="wlo1",
             foreground=colors[2],
             background=colors[5],
             padding=5
@@ -414,10 +443,8 @@ def init_widgets_list():
             padding=0,
             fontsize=18
         ),
-        widget.BatteryIcon(
-            background=colors[4],
-        ),
-        widget.Battery(
+        widget.GenPollText(
+            func=getBatteryCapacity,
             background=colors[4],
         ),
         widget.TextBox(
@@ -450,7 +477,10 @@ def init_widgets_list():
             padding=0,
             fontsize=18
         ),
-        Backlight(
+        widget.Backlight(
+            backlight_name='edp-backlight',
+            change_command='light -S {0}',
+            fmt=' {}',
             foreground=colors[2],
             background=colors[4],
             padding=5,
@@ -493,7 +523,7 @@ def init_widgets_list():
         widget.Clock(
             foreground=colors[2],
             background=colors[4],
-            format="%A, %B %d - %H:%M"
+            format="%a, %b %d - %H:%M"
         ),
         widget.Sep(
             linewidth=0,
@@ -504,6 +534,12 @@ def init_widgets_list():
         widget.Systray(
             background=colors[0],
             padding=5
+        ),
+        widget.Sep(
+            linewidth=0,
+            padding=7,
+            foreground=colors[0],
+            background=colors[4]
         ),
     ]
     return widgets_list

@@ -5,3 +5,4 @@ nm-applet &
 blueman-tray &
 optimus-manager-qt &
 powerkit &
+clight &
