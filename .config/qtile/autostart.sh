@@ -5,4 +5,4 @@ nm-applet &
 blueman-tray &
 optimus-manager-qt &
 powerkit &
-clight &
+indicator-sound-switcher &

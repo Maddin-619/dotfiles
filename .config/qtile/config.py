@@ -51,7 +51,7 @@ for name in batteryNames:
     if os.path.exists("/sys/class/power_supply/" + name):
         batteryName = name
 
-backlightName= ''
+backlightName = ''
 for name in backlightNames:
     if os.path.exists("/sys/class/backlight/" + name):
         backlightName = name
@@ -80,17 +80,21 @@ def get_num_monitors():
     else:
         return num_monitors
 
+
 def getBatteryCapacity():
     icons = ['', '', '', '', '', '', '', '', '', '']
-    capacity = int(subprocess.check_output(["cat", "/sys/class/power_supply/" + batteryName + "/capacity"]).decode("utf-8").strip())
-    charging = subprocess.check_output(["cat", "/sys/class/power_supply/" + batteryName + "/status"]).decode("utf-8").strip()
+    capacity = int(subprocess.check_output(
+        ["cat", "/sys/class/power_supply/" + batteryName + "/capacity"]).decode("utf-8").strip())
+    charging = subprocess.check_output(
+        ["cat", "/sys/class/power_supply/" + batteryName + "/status"]).decode("utf-8").strip()
     icon = ''
     if charging == 'Charging':
         icon = ''
+    if charging == 'Full':
+        icon = ''
     else:
         icon = icons[capacity // 10]
     return '{0} {1} %'.format(icon, capacity)
-
 
 
 ##### KEYBINDINGS #####
@@ -361,33 +365,6 @@ def init_widgets_list():
             text='\ue0b2',
             font='Hack Nerd Font',
             background=colors[0],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
-        widget.TextBox(
-            text=" ⟳",
-            padding=5,
-            foreground=colors[2],
-            background=colors[4],
-            fontsize=14
-        ),
-        widget.Pacman(
-            execute="alacritty",
-            update_interval=1800,
-            foreground=colors[2],
-            background=colors[4]
-        ),
-        widget.TextBox(
-            text="Updates",
-            padding=5,
-            foreground=colors[2],
-            background=colors[4]
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[4],
             foreground=colors[5],
             padding=0,
             fontsize=18
@@ -478,7 +455,7 @@ def init_widgets_list():
             fontsize=18
         ),
         widget.Backlight(
-            backlight_name='edp-backlight',
+            backlight_name=backlightName,
             change_command='light -S {0}',
             fmt=' {}',
             foreground=colors[2],
@@ -539,7 +516,7 @@ def init_widgets_list():
             linewidth=0,
             padding=7,
             foreground=colors[0],
-            background=colors[4]
+            background=colors[0]
         ),
     ]
     return widgets_list
@@ -554,7 +531,7 @@ def init_widgets_primary_screen():
 
 def init_widgets_secoundary_screen():
     widgets = init_widgets_list()
-    return widgets[:-1]
+    return widgets[:-2]
 
 
 def init_screens(num_monitors):
