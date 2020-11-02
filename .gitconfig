@@ -1,7 +1,11 @@
 [user]
-	email = Martin.Brenner94@gmail.com
-	name = Maddin-619
+	email = Martin.Brenner@ite-si.de
+	name = Martin Brenner
 [core]
 	editor = vim
+	sshCommand = ssh -i ~/.ssh/gitlab -F /dev/null
 [credential]
 	helper = cache
+[pull]
+	reabase = false
+	rebase = false

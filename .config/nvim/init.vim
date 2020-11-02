@@ -21,6 +21,10 @@ Plug 'garbas/vim-snipmate' " snipmate.vim aims to be a concise vim script that i
 Plug 'MarcWeber/vim-addon-mw-utils'
 Plug 'tomtom/tlib_vim'
 Plug 'honza/vim-snippets'
+" ES2015 code snippets (Optional)
+Plug 'epilande/vim-es2015-snippets'
+" React code snippets
+Plug 'epilande/vim-react-snippets'
 
 Plug 'tpope/vim-commentary' " Comment stuff out. Use gcc to comment out a line (takes a count), gc to comment out the target of a motion. gcu uncomments a set of adjacent commented lines.
 Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
@@ -32,7 +36,7 @@ Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neoyank.vim'
 Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'Chiel92/vim-autoformat'
 Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
@@ -42,6 +46,10 @@ Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
 Plug 'ap/vim-css-color'
+Plug 'alampros/vim-styled-jsx'
+
+Plug 'xavierchow/vim-swagger-preview'
+Plug 'goerz/jupytext.vim'
 
 Plug 'HerringtonDarkholme/yats.vim' " TS Syntax highlight
 Plug 'jparise/vim-graphql'
@@ -810,7 +818,9 @@ nnoremap <silent> <Leader>' :FloatermNew lazygit<CR>
 " Open lazydocker
 nnoremap <silent> <Leader>d :FloatermNew lazydocker<CR>
 " Open scratch term
-nnoremap <silent> <Leader>s :FloatermNew<CR>
+nnoremap <silent> <Leader>z :FloatermNew<CR>
+" Open slack-term
+nnoremap <silent> <Leader>s :FloatermNew slack-term<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -902,10 +912,10 @@ au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vim-closetag
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
-let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
-let g:closetag_filetypes = '"html,xhtml,phtml'
-let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.tsx'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx'
+let g:closetag_filetypes = '"html,xhtml,phtml,tsx'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'
 let g:closetag_regions = {
     \ 'typescript.tsx': 'jsxRegion,tsxRegion',
     \ 'javascript.jsx': 'jsxRegion',
@@ -960,48 +970,6 @@ let g:lightline = {
       \ }
       \ }
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => prettier config
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Max line length that prettier will wrap on: a number or 'auto' (use
-" textwidth).
-" default: 'auto'
-let g:prettier#config#print_width = 'auto'
-
-" number of spaces per indentation level: a number or 'auto' (use
-" softtabstop)
-" default: 'auto'
-let g:prettier#config#tab_width = 2
-
-" use tabs instead of spaces: true, false, or auto (use the expandtab setting).
-" default: 'auto'
-let g:prettier#config#use_tabs = 'auto'
-
-" flow|babylon|typescript|css|less|scss|json|graphql|markdown or empty string
-" (let prettier choose).
-" default: ''
-let g:prettier#config#parser = ''
-
-" cli-override|file-override|prefer-file
-" default: 'file-override'
-let g:prettier#config#config_precedence = 'file-override'
-
-" always|never|preserve
-" default: 'preserve'
-let g:prettier#config#prose_wrap = 'preserve'
-
-" css|strict|ignore
-" default: 'css'
-let g:prettier#config#html_whitespace_sensitivity = 'css'
-
-" false|true
-" default: 'false'
-let g:prettier#config#require_pragma = 'false'
-
-let g:prettier#autoformat_require_pragma = 0
-
-let g:prettier#autoformat_config_present = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => coc config

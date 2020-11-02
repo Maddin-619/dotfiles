@@ -79,12 +79,12 @@ GITSTATUS_DAEMON="$HOME/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/bin/git
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-VSCODE=code-insiders
 plugins=(
   docker-compose
   docker
   git
   git-flow
+  history-substring-search
   jira
   node
   mvn
@@ -95,7 +95,6 @@ plugins=(
   sudo
   systemd
   vi-mode
-  vscode
   web-search
   yarn
 )
@@ -126,8 +125,8 @@ export JIRA_NAME="mbrenner"
 export JIRA_PREFIX="IIOT-"
 export PATH=$PATH:$HOME/.local/bin
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -144,6 +143,8 @@ alias config="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
 alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias grep='grep --colour=auto'
+alias ls='ls --color=auto'
+alias la='ls -lah --color=auto'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -153,18 +154,20 @@ export NVM_DIR="$HOME/.nvm"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 source /usr/share/nvm/init-nvm.sh
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$("$HOME/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
+if [ -d "$HOME/miniconda3" ]; then
+  CONDA_FOLDER="$HOME"
+else
+  CONDA_FOLDER="/opt"
+fi
+
+__conda_setup="$("$CONDA_FOLDER/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "$CONDA_FOLDER/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$CONDA_FOLDER/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="$HOME/miniconda3/bin:$PATH"
+        export PATH="$CONDA_FOLDER/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
-# <<< conda initialize <<<
-
