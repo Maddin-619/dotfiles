@@ -4,14 +4,11 @@
 
 " Specify a directory for plugins
 call plug#begin('~/.vim/plugged')
-Plug 'mileszs/ack.vim' " Vim plugin for the_silver_searcher (ag) or ack -- a wicked fast grep
-Plug 'vim-scripts/bufexplorer.zip' " Quickly and easily switch between buffers. This plugin can be opened with <leader+o>
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Language Server Intelisense
 Plug 'itchyny/lightline.vim' " A light and configurable statusline/tabline for Vim
 Plug 'preservim/nerdtree' " A tree explorer plugin for vim
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'vim-scripts/mru.vim' " Plugin to manage Most Recently Used (MRU) files. This plugin can be opened with <leader+f>
 Plug 'voldikss/vim-floaterm'
 Plug 'amix/open_file_under_cursor.vim' " Open file under cursor when pressing gf
 Plug 'unblevable/quick-scope'
@@ -33,13 +30,11 @@ Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
-Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neoyank.vim'
-Plug 'ctrlpvim/ctrlp.vim' " Fuzzy file, buffer, mru and tag finder. It's mapped to <Ctrl+F>
 Plug 'Chiel92/vim-autoformat'
 Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
+" Colorschemes
 Plug 'morhetz/gruvbox'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'kristijanhusak/vim-hybrid-material'
@@ -56,13 +51,15 @@ Plug 'jparise/vim-graphql'
 Plug 'pangloss/vim-javascript'
 Plug 'Quramy/vim-js-pretty-template'
 
-Plug 'liuchengxu/vim-which-key'
-
 Plug 'vim-vdebug/vdebug'
 Plug 'diepm/vim-rest-console'
 
 Plug 'ryanoasis/vim-devicons' " Adds icons to plugins
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'airblade/vim-rooter'
 
 " Initialize plugin system
 call plug#end()
@@ -444,38 +441,13 @@ function! VisualSelection(direction, extra_filter) range
     let l:pattern = substitute(l:pattern, "\n$", "", "")
 
     if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
+        call CmdLine("RG " . l:pattern )
     elseif a:direction == 'replace'
         call CmdLine("%s" . '/'. l:pattern . '/')
     endif
 
     let @/ = l:pattern
     let @" = l:saved_reg
-endfunction
-
-" Creates a floating window with a most recent buffer to be used
-function! CreateCenteredFloatingWindow()
-    let width = float2nr(&columns * 0.6)
-    let height = float2nr(&lines * 0.6)
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
-
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    autocmd BufWipeout <buffer> call CleanupBuffer(s:buf)
-    tnoremap <buffer> <silent> <M-q> <C-\><C-n><CR>:call DeleteUnlistedBuffers()<CR>
 endfunction
 
 "##############################################################################
@@ -595,19 +567,18 @@ autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ack searching and cope displaying
-"    requires ack.vim - it's much better than vimgrep/grep
+" => Rg searching and cope displaying
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use the the_silver_searcher if possible (much faster than Ack)
+" Use ripgrep if possible (much faster than Ack)
 if executable('ag')
-  let g:ackprg = 'ag --vimgrep --smart-case'
+  let g:ackprg = 'rg --vimgrep --hidden --glob !.git'
 endif
 
-" When you press gv you Ack after the selected text
+" When you press gv you rg after the selected text
 vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
 
-" Open Ack and put the cursor in the right position
-map <leader>g :Ack 
+" Search word under cursor
+nnoremap <silent> <leader>r :RG <C-R><C-W><CR>
 
 " When you press <leader>r you can search and replace the selected text
 vnoremap <silent> <leader>r :call VisualSelection('replace', '')<CR>
@@ -724,59 +695,126 @@ let vim_markdown_folding_disabled = 1
 
 
 """"""""""""""""""""""""""""""
-" => bufExplorer plugin
+" => fzf.vim
 """"""""""""""""""""""""""""""
-let g:bufExplorerDefaultHelp=0
-let g:bufExplorerShowRelativePath=1
-let g:bufExplorerFindActive=1
-let g:bufExplorerSortBy='name'
-map <leader>o :BufExplorer<cr>
+autocmd FileType fzf tmap <buffer> <M-j> <C-j>
+autocmd FileType fzf tmap <buffer> <M-k> <C-k>
+autocmd FileType fzf tmap <buffer> <M-h> <Nop>
+autocmd FileType fzf tmap <buffer> <M-l> <Nop>
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+" Enable per-command history.
+" CTRL-N and CTRL-P will be automatically bound to next-history and
+" previous-history instead of down and up. If you don't like the change,
+" explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+map <leader>j :Files<CR>
+map <leader>f :History<CR>
+map <M-o> :Buffers<CR>
+map <M-p> :Registers<CR>
+nnoremap <leader>g :RG<CR>
+" nnoremap <leader>t :Tags<CR>
+" nnoremap <leader>m :Marks<CR>
+
+nmap <leader>? <plug>(fzf-maps-n)
+xmap <leader>? <plug>(fzf-maps-x)
+omap <leader>? <plug>(fzf-maps-o)
+
+let g:fzf_tags_command = 'ctags -R'
+" Border color
+let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'highlight': 'Todo', 'border': 'sharp' } }
+
+let $FZF_DEFAULT_OPTS = '--layout=reverse --info=inline --bind alt-enter:select-all+accept'
+let $FZF_DEFAULT_COMMAND="rg --files --hidden --glob !.git"
 
 
-""""""""""""""""""""""""""""""
-" => MRU plugin
-""""""""""""""""""""""""""""""
-let MRU_Max_Entries = 400
-map <leader>f :MRU<CR>
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+
+"Get Files
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 
 
-""""""""""""""""""""""""""""""
-" => NeoYank / denite
-""""""""""""""""""""""""""""""
-" Define mappings
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
+" Get text in files with Rg
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+
+" Ripgrep advanced
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --glob !.git %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
 endfunction
 
-nmap <M-p> :Denite neoyank -winheight=10<CR>
-nmap <M-o> :Denite buffer -winheight=10<CR>
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+" Git grep
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number '.shellescape(<q-args>), 0,
+  \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
 
 
-""""""""""""""""""""""""""""""
-" => CTRL-P
-""""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
+" Registers
+function! s:get_registers() abort
+  redir => l:regs
+  silent registers
+  redir END
 
-let g:ctrlp_map = '<C-f>'
-map <leader>j :CtrlP<cr>
-map <C-b> :CtrlPBuffer<cr>
+  return split(l:regs, '\n')[1:]
+endfunction
 
-let g:ctrlp_max_height = 20
-let g:ctrlp_show_hidden = 1
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
+function! s:registers(...) abort
+  let l:opts = {
+        \ 'source': s:get_registers(),
+        \ 'sink': {x -> feedkeys(matchstr(x, '\v^\S+\ze.*') . (a:1 ? 'P' : 'p'), 'x')},
+        \ 'options': '--prompt="Reg> "'
+        \ }
+  call fzf#run(fzf#wrap(l:opts))
+endfunction
 
+command! -bang Registers call s:registers('<bang>' ==# '!')
+
+" Delete Buffers
+function! s:list_buffers()
+  redir => list
+  silent ls
+  redir END
+  return split(list, "\n")
+endfunction
+
+function! s:delete_buffers(lines)
+  execute 'bwipeout' join(map(a:lines, {_, line -> split(line)[0]}))
+endfunction
+
+command! BD call fzf#run(fzf#wrap({
+  \ 'source': s:list_buffers(),
+  \ 'sink*': { lines -> s:delete_buffers(lines) },
+  \ 'options': '--multi --reverse --bind ctrl-a:select-all+accept'
+\ }))
 
 """"""""""""""""""""""""""""""
 " => ZenCoding
