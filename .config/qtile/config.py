@@ -81,6 +81,9 @@ def get_num_monitors():
         return num_monitors
 
 
+[445, 480, 481, 482, 483, 484, 485]
+
+
 def getBatteryCapacity():
     icons = ['', '', '', '', '', '', '', '', '', '']
     capacity = int(subprocess.check_output(
@@ -502,11 +505,25 @@ def init_widgets_list():
             background=colors[4],
             format="%a, %b %d - %H:%M"
         ),
+        widget.TextBox(
+            text='\ue0b2',
+            font='Hack Nerd Font',
+            background=colors[4],
+            foreground=colors[5],
+            padding=0,
+            fontsize=18
+        ),
+        widget.KeyboardLayout(
+            configured_keyboards=['us', 'de'],
+            foreground=colors[2],
+            background=colors[5],
+            padding=5
+        ),
         widget.Sep(
             linewidth=0,
             padding=5,
             foreground=colors[0],
-            background=colors[4]
+            background=colors[5]
         ),
         widget.Systray(
             background=colors[0],
@@ -537,12 +554,9 @@ def init_widgets_secoundary_screen():
 def init_screens(num_monitors):
     if num_monitors == 1:
         return [Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
-    elif num_monitors == 2:
-        return [Screen(top=bar.Bar(widgets=init_widgets_secoundary_screen(), opacity=0.95, size=20)),
-                Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
     else:
-        screens = [Screen(top=bar.Bar(widgets=init_widgets_secoundary_screen(), opacity=0.95, size=20)),
-                   Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
+        screens = [Screen(top=bar.Bar(
+            widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
         for _ in range(num_monitors - 1):
             screens.append(Screen(top=bar.Bar(
                 widgets=init_widgets_secoundary_screen(), opacity=0.95, size=20)))
