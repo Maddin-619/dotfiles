@@ -28,7 +28,7 @@ import os
 import subprocess
 import socket
 from Xlib import display as xdisplay
-from libqtile.config import Key, Screen, Group, Drag, Click
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
 from libqtile import layout, bar, widget, hook
@@ -394,6 +394,7 @@ def init_widgets_list():
         ),
         widget.CPUGraph(
             background=colors[4],
+            samples=90,
         ),
         widget.TextBox(
             text='\ue0b2',
@@ -584,22 +585,12 @@ main = None
 follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
+
 floating_layout = layout.Floating(float_rules=[
-    {'wmclass': 'confirm'},
-    {'wmclass': 'dialog'},
-    {'wmclass': 'download'},
-    {'wmclass': 'error'},
-    {'wmclass': 'file_progress'},
-    {'wmclass': 'notification'},
-    {'wmclass': 'splash'},
-    {'wmclass': 'toolbar'},
-    {'wmclass': 'confirmreset'},  # gitk
-    {'wmclass': 'makebranch'},  # gitk
-    {'wmclass': 'maketag'},  # gitk
-    {'wname': 'branchdialog'},  # gitk
-    {'wname': 'pinentry'},  # GPG key password entry
-    {'wmclass': 'ssh-askpass'},  # ssh-askpass
+    *layout.Floating.default_float_rules,
+    Match(title="emulator"),
 ])
+
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
