@@ -178,3 +178,4 @@ unset __conda_setup
 source /usr/share/fzf/completion.zsh
 source /usr/share/fzf/key-bindings.zsh
 
+export PATH=${PATH}:`go env GOPATH`/bin
