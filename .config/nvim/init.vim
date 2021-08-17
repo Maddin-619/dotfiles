@@ -11,6 +11,9 @@ Plug 'glepnir/lspsaga.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 
 Plug 'mfussenegger/nvim-dap'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'theHamsta/nvim-dap-virtual-text'
+
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
@@ -61,7 +64,6 @@ Plug 'christianchiarulli/nvcode-color-schemes.vim'
 Plug 'xavierchow/vim-swagger-preview'
 Plug 'goerz/jupytext.vim'
 
-Plug 'vim-vdebug/vdebug'
 Plug 'diepm/vim-rest-console'
 
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
