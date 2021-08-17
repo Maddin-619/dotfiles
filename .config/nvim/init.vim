@@ -614,6 +614,26 @@ func! CurrentFileDir(cmd)
     return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
 
+""""""""""""""""""""""""""""""
+" => Folding
+""""""""""""""""""""""""""""""
+
+" This function customises what is displayed on the folded line:
+set foldtext=MyFoldText()
+function! MyFoldText()
+    let line = getline(v:foldstart)
+    let linecount = v:foldend + 1 - v:foldstart
+    let plural = ""
+    if linecount != 1
+        let plural = "s"
+    endif
+    let foldtext = printf(" +%s %d line%s: %s", v:folddashes, linecount, plural, line)
+    return foldtext
+endfunction
+" This is the line that works the magic
+set foldmarker=#ifdef\ LINUX,#else
+set foldmethod=marker
+
 
 """"""""""""""""""""""""""""""
 " => Markdown
@@ -771,7 +791,7 @@ let g:qs_lazy_highlight = 1
 """"""""""""""""""""""""""""""
 " => Floaterm
 """"""""""""""""""""""""""""""
-let g:floaterm_gitcommit='floaterm'
+" let g:floaterm_gitcommit='floaterm'
 let g:floaterm_autoinsert=1
 let g:floaterm_width=0.8
 let g:floaterm_height=0.8
@@ -786,6 +806,14 @@ nnoremap <silent> <Leader>d :FloatermNew lazydocker<CR>
 nnoremap <silent> <Leader>z :FloatermNew<CR>
 " Open slack-term
 nnoremap <silent> <Leader>s :FloatermNew slack-term<CR>
+
+" NVR
+if has('nvim')
+  let $GIT_EDITOR = "nvr -cc split --remote-wait +'set bufhidden=wipe'"
+endif
+
+autocmd FileType gitcommit,gitrebase,gitconfig set bufhidden=delete
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -914,7 +942,7 @@ endfunction
 
 function! LspWarnings() abort
   if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ' :' . luaeval("vim.lsp.diagnostic.get_count(0, [[Warn]])")
+    return ' :' . luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
   endif
   return ''
 endfunction

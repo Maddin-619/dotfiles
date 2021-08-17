@@ -55,7 +55,7 @@ local setup = function()
   }
   local default_lsp_config = {on_attach = on_attach_vim, capabilities = capabilities}
 
-  local servers = {"bashls", "dockerls", "gopls", "graphql", "pyright", "vimls", "yamlls", "rust_analyzer"}
+  local servers = {"bashls", "dockerls", "gopls", "graphql", "pyright", "vimls", "yamlls", "rust_analyzer", "html", "cssls"}
 
   for _, server in ipairs(servers) do lspconfig[server].setup(default_lsp_config) end
 
@@ -78,9 +78,12 @@ local setup = function()
   }
 
   local eslint = {
-    lintCommand = "eslint_d -f unix --stdin --stdin-filename ${INPUT}",
+    lintCommand = "eslint_d -f visualstudio --stdin --stdin-filename ${INPUT}",
     lintStdin = true,
-    lintFormats = {"%f:%l:%c: %m"},
+    lintFormats = {
+      "%f(%l,%c): %tarning %m",
+      "%f(%l,%c): %rror %m"
+    },
     lintIgnoreExitCode = true,
     formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
     formatStdin = true
@@ -102,24 +105,15 @@ local setup = function()
     return false
   end
 
-  local cap = vim.lsp.protocol.make_client_capabilities()
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = {
-      'documentation',
-      'detail',
-      'additionalTextEdits',
-    }
-  }
-
   lspconfig.tsserver.setup {
     on_attach = function(client)
       if client.config.flags then
         client.config.flags.allow_incremental_sync = true
       end
       client.resolved_capabilities.document_formatting = false
+      on_attach_vim(client)
     end,
-    capabilities = cap
+    capabilities = capabilities
   }
 
   lspconfig.efm.setup {
@@ -127,11 +121,9 @@ local setup = function()
     on_attach = function(client)
       client.resolved_capabilities.document_formatting = true
       client.resolved_capabilities.goto_definition = false
+      on_attach_vim(client)
     end,
     root_dir = function(fname)
-      if not eslint_config_exists() then
-        return nil
-      end
       return util.root_pattern(".git")(fname) or util.path.dirname(fname)
     end,
     settings = {
@@ -164,18 +156,8 @@ local setup = function()
         end
       }
     },
-    capabilities = capabilities
-  }
-
-  -- HTML
-
-  lspconfig.html.setup {
     capabilities = capabilities,
-  }
-
-  -- CSS
-  lspconfig.cssls.setup {
-    capabilities = capabilities,
+    on_attach = on_attach_vim,
   }
 
   local runtime_path = vim.split(package.path, ';')
@@ -207,6 +189,7 @@ local setup = function()
       },
     },
     capabilities = capabilities,
+    on_attach = on_attach_vim,
   }
 end
 
