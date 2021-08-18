@@ -31,6 +31,16 @@ dap.configurations.python = {
   },
 }
 
+local remap = vim.api.nvim_set_keymap
+remap("n", "<F5>", ":lua require'dap'.continue()<CR>", { noremap = false, silent = false})
+remap("n", "<F9>", ":lua require'dap'.toggle_breakpoint()<CR>", { noremap = false, silent = false})
+remap("n", "<F10>", ":lua require'dap'.step_over()<CR>", { noremap = false, silent = false})
+remap("n", "<F11>", ":lua require'dap'.step_into()<CR>", { noremap = false, silent = false})
+remap("n", "<F12>", ":lua require'dap'.step_out()<CR>", { noremap = false, silent = false})
+remap("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>", { noremap = false, silent = false})
+remap("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", { noremap = false, silent = false})
+
+
 require("dapui").setup({
   icons = { expanded = "▾", collapsed = "▸" },
   mappings = {
