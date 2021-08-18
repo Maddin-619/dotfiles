@@ -70,7 +70,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'airblade/vim-rooter'
+" Plug 'airblade/vim-rooter'
 
 " Initialize plugin system
 call plug#end()
@@ -1051,7 +1051,12 @@ augroup end
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => lspsaga
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent><leader>ca <cmd>lua require('lspsaga.codeaction').code_action()<CR>
+vnoremap <silent><leader>ca :<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Init Lua Configs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 luafile ~/.config/nvim/lua/init.lua
