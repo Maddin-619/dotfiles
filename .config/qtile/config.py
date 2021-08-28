@@ -27,7 +27,9 @@
 import os
 import subprocess
 import socket
+import requests
 from Xlib import display as xdisplay
+from libqtile import qtile
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
@@ -312,6 +314,8 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
+public_ip = requests.get('https://ifconfig.me').text
+
 ##### WIDGETS #####
 
 
@@ -494,17 +498,18 @@ def init_widgets_list():
             padding=0,
             fontsize=18
         ),
-        widget.TextBox(
-            text=" 🕒",
+        widget.Wttr(
             foreground=colors[2],
             background=colors[4],
-            padding=5,
-            fontsize=14
-        ),
-        widget.Clock(
-            foreground=colors[2],
-            background=colors[4],
-            format="%a, %b %d - %H:%M"
+            json=False,
+            format=1,
+            location={
+                public_ip: public_ip,
+                'Stuttgart': 'Stuttgart',
+            },
+            mouse_callbacks={
+                'Button1': lambda: qtile.cmd_spawn(myTerm + ' --hold -e wttr ' + public_ip)
+            }
         ),
         widget.TextBox(
             text='\ue0b2',
@@ -514,17 +519,37 @@ def init_widgets_list():
             padding=0,
             fontsize=18
         ),
+        widget.TextBox(
+            text=" 🕒",
+            foreground=colors[2],
+            background=colors[5],
+            padding=5,
+            fontsize=14
+        ),
+        widget.Clock(
+            foreground=colors[2],
+            background=colors[5],
+            format="%a, %b %d - %H:%M"
+        ),
+        widget.TextBox(
+            text='\ue0b2',
+            font='Hack Nerd Font',
+            background=colors[5],
+            foreground=colors[4],
+            padding=0,
+            fontsize=18
+        ),
         widget.KeyboardLayout(
             configured_keyboards=['us', 'de'],
             foreground=colors[2],
-            background=colors[5],
+            background=colors[4],
             padding=5
         ),
         widget.Sep(
             linewidth=0,
             padding=5,
             foreground=colors[0],
-            background=colors[5]
+            background=colors[4]
         ),
         widget.Systray(
             background=colors[0],
