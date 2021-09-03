@@ -1037,9 +1037,10 @@ set updatetime=300
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Presenting.Vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:markdown_fenced_languages = ["vim", "json"]
+let g:markdown_fenced_languages = ["vim", "json", "bash", "python", "html", "javascript", "typescript"]
 let g:presenting_figlets = 1
 let g:presenting_top_margin = 2
+let b:presenting_slide_separator = '\v(^|\n)\ze#{2} '
 
 augroup presentation
     autocmd!
