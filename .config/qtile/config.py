@@ -314,7 +314,10 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-public_ip = requests.get('https://ifconfig.me').text
+try:
+    public_ip = requests.get('https://ifconfig.me').text
+except:
+    public_ip = "Heumaden"
 
 ##### WIDGETS #####
 
