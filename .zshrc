@@ -118,6 +118,8 @@ else
   export EDITOR='nvim'
 fi
 
+export TERMINFO=/usr/share/terminfo
+
 if grep -q Microsoft /proc/version; then
   export DOCKER_HOST="tcp://localhost:2375"
 fi

@@ -62,7 +62,7 @@ require("dapui").setup({
       },
       { id = "breakpoints", size = 0.25 },
       { id = "stacks", size = 0.25 },
-      { id = "watches", size = 00.25 },
+      { id = "watches", size = 0.25 },
     },
     width = 40,
     position = "left", -- Can be "left" or "right"
@@ -114,7 +114,7 @@ dap.adapters.go = function(callback, config)
     function()
       callback({type = "server", host = "127.0.0.1", port = port})
     end,
-    100)
+    2000)
 end
 
 -- https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
