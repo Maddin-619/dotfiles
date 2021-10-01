@@ -40,8 +40,8 @@ remap("n", "<F12>", ":lua require'dap'.step_out()<CR>", { noremap = false, silen
 remap("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>", { noremap = false, silent = false})
 remap("n", "<leader>dl", ":lua require'dap'.run_last()<CR>", { noremap = false, silent = false})
 
-
-require("dapui").setup({
+local dapui = require('dapui')
+dapui.setup({
   icons = { expanded = "▾", collapsed = "▸" },
   mappings = {
     -- Use a table to apply multiple mappings
@@ -52,7 +52,6 @@ require("dapui").setup({
     repl = "r",
   },
   sidebar = {
-    open_on_start = true,
     -- You can change the order of elements in the sidebar
     elements = {
       -- Provide as ID strings or tables with "id" and "size" keys
@@ -64,13 +63,12 @@ require("dapui").setup({
       { id = "stacks", size = 0.25 },
       { id = "watches", size = 0.25 },
     },
-    width = 40,
+    size = 40,
     position = "left", -- Can be "left" or "right"
   },
   tray = {
-    open_on_start = true,
     elements = { "repl" },
-    height = 10,
+    size = 10,
     position = "bottom", -- Can be "bottom" or "top"
   },
   floating = {
@@ -82,6 +80,10 @@ require("dapui").setup({
   },
   windows = { indent = 1 },
 })
+
+dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
+dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
+dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
 
 dap.adapters.go = function(callback, config)
   local stdout = vim.loop.new_pipe(false)
