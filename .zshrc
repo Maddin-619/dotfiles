@@ -87,7 +87,6 @@ plugins=(
   node
   mvn
   npm
-  nvm
   pip
   python
   sudo
@@ -117,6 +116,8 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
+
+export TERMINFO=/usr/share/terminfo
 
 if grep -q Microsoft /proc/version; then
   export DOCKER_HOST="tcp://localhost:2375"
@@ -149,13 +150,16 @@ alias ls='ls --color=auto'
 alias la='exa -la'
 alias aur="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  nvm_cmds=(nvm node npm yarn)
+  for cmd in $nvm_cmds ; do
+    alias $cmd="unalias $nvm_cmds && unset nvm_cmds && . $NVM_DIR/nvm.sh && $cmd"
+  done
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-source /usr/share/nvm/init-nvm.sh
 
 if [ -d "$HOME/miniconda3" ]; then
   CONDA_FOLDER="$HOME"

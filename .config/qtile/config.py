@@ -504,7 +504,6 @@ def init_widgets_list():
         widget.Wttr(
             foreground=colors[2],
             background=colors[4],
-            json=False,
             format=1,
             location={
                 public_ip: public_ip,

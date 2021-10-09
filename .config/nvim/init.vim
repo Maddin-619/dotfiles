@@ -356,6 +356,8 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+au BufRead,BufNewFile Jenkinsfile set filetype=groovy
+
 """"""""""""""""""""""""""""""
 " => Status line
 """"""""""""""""""""""""""""""
@@ -1037,9 +1039,10 @@ set updatetime=300
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Presenting.Vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:markdown_fenced_languages = ["vim", "json"]
+let g:markdown_fenced_languages = ["vim", "json", "bash", "python", "html", "javascript", "typescript"]
 let g:presenting_figlets = 1
 let g:presenting_top_margin = 2
+let b:presenting_slide_separator = '\v(^|\n)\ze#{2} '
 
 augroup presentation
     autocmd!
