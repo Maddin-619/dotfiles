@@ -161,23 +161,25 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-if [ -d "$HOME/miniconda3" ]; then
-  CONDA_FOLDER="$HOME"
-else
-  CONDA_FOLDER="/opt"
-fi
-
-__conda_setup="$("$CONDA_FOLDER/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/mambaforge/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "$CONDA_FOLDER/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "$CONDA_FOLDER/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/opt/mambaforge/etc/profile.d/conda.sh" ]; then
+        . "/opt/mambaforge/etc/profile.d/conda.sh"
     else
-        export PATH="$CONDA_FOLDER/miniconda3/bin:$PATH"
+        export PATH="/opt/mambaforge/bin:$PATH"
     fi
 fi
 unset __conda_setup
+
+if [ -f "/opt/mambaforge/etc/profile.d/mamba.sh" ]; then
+    . "/opt/mambaforge/etc/profile.d/mamba.sh"
+fi
+# <<< conda initialize <<<
+
 
 source /usr/share/fzf/completion.zsh
 source /usr/share/fzf/key-bindings.zsh

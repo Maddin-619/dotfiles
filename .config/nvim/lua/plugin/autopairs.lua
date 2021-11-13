@@ -2,11 +2,6 @@ local npairs = require('nvim-autopairs')
 npairs.setup({
   enable_check_bracket_line = true
 })
-require("nvim-autopairs.completion.compe").setup({
-  map_cr = true, --  map <CR> on insert mode
-  map_complete = true, -- it will auto insert `(` after select function or method item
-  auto_select = false,  -- auto select first item
-})
 
 npairs.setup({
     fast_wrap = {},
