@@ -314,7 +314,11 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-public_ip = requests.get('https://ifconfig.me').text
+public_ip = 'Stuttgart'
+try:
+    public_ip = requests.get('https://ifconfig.me').text
+except:
+  print('An exception occurred')
 
 ##### WIDGETS #####
 

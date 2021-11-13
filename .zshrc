@@ -149,6 +149,7 @@ alias grep='grep --colour=auto'
 alias ls='ls --color=auto'
 alias la='exa -la'
 alias aur="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
+alias shutdown="sudo shutdown now"
 
 if [ -s "$HOME/.nvm/nvm.sh" ]; then
   export NVM_DIR="$HOME/.nvm"
