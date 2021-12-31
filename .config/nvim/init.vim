@@ -6,8 +6,22 @@
 call plug#begin('~/.vim/plugged')
 
 Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/nvim-compe'
-Plug 'glepnir/lspsaga.nvim'
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-calc'
+Plug 'ray-x/cmp-treesitter'
+Plug 'hrsh7th/cmp-emoji'
+Plug 'f3fora/cmp-spell'
+Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
+Plug 'tami5/lspsaga.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 
 Plug 'mfussenegger/nvim-dap'
@@ -20,7 +34,7 @@ Plug 'folke/trouble.nvim'
 
 Plug 'sotte/presenting.vim'
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': 'TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 
 Plug 'lambdalisue/fern.vim'

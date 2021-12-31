@@ -43,8 +43,10 @@ local setup = function()
     end
 
   end
-  -- enable lsp capabilities
-  local capabilities = lsp_status.capabilities
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
+
   capabilities.textDocument.completion.completionItem.snippetSupport = true
   capabilities.textDocument.completion.completionItem.resolveSupport = {
     properties = {
