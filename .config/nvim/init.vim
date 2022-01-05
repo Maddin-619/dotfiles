@@ -600,6 +600,7 @@ map <leader>cc :botright cope<cr>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
+map <leader>c :cclose<cr>
 
 " Make sure that enter is never overriden in the quickfix window
 autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
@@ -953,21 +954,21 @@ endfunction
 
 function! LspHints() abort
   if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ':' . luaeval("vim.lsp.diagnostic.get_count(0, [[Hint]])")
+    return ':' . luaeval("table.getn(vim.diagnostic.get(0, { severity = {max=vim.diagnostic.severity.INFO} }))")
   endif
   return ''
 endfunction
 
 function! LspWarnings() abort
   if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ' :' . luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
+    return ' :' . luaeval("table.getn(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN }))")
   endif
   return ''
 endfunction
 
 function! LspErrors() abort
   if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ':' . luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
+    return ':' . luaeval("table.getn(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }))")
   endif
   return ''
 endfunction
