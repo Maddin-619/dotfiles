@@ -1,5 +1,3 @@
-local lsp_status = require("lsp-status")
-local status = require("lsp_status")
 local lspconfig = require 'lspconfig'
 local util = require 'lspconfig/util'
 
@@ -25,16 +23,52 @@ local attach_formatting = function(client)
 end
 
 local setup = function()
-  status.activate()
+
+  local signs = {
+    { name = "DiagnosticSignError", text = "" },
+    { name = "DiagnosticSignWarn", text = "" },
+    { name = "DiagnosticSignHint", text = "" },
+    { name = "DiagnosticSignInfo", text = "" },
+  }
+
+  for _, sign in ipairs(signs) do
+    vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
+  end
+
+  local config = {
+    -- disable virtual text
+    virtual_text = true,
+    -- show signs
+    signs = {
+      active = signs,
+    },
+    update_in_insert = true,
+    underline = true,
+    severity_sort = true,
+    float = {
+      focusable = false,
+      style = "minimal",
+      border = "rounded",
+      source = "always",
+      header = "",
+      prefix = "",
+    },
+  }
+
+  vim.diagnostic.config(config)
+
+  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+    border = "rounded",
+  })
+
+  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+    border = "rounded",
+  })
 
   --- Language servers
   local on_attach_vim = function(client)
 
-    lsp_status.register_client(client.name)
-
     print("'" .. client.name .. "' language server attached")
-
-    lsp_status.on_attach(client)
 
     if client.resolved_capabilities.document_formatting then
       print(string.format("Formatting supported %s", client.name))
@@ -45,7 +79,9 @@ local setup = function()
   end
 
   -- Setup lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
+  -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
   capabilities.textDocument.completion.completionItem.snippetSupport = true
   capabilities.textDocument.completion.completionItem.resolveSupport = {

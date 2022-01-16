@@ -22,7 +22,6 @@ Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
 Plug 'tami5/lspsaga.nvim'
-Plug 'nvim-lua/lsp-status.nvim'
 
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
@@ -44,7 +43,10 @@ Plug 'lambdalisue/glyph-palette.vim'
 Plug 'lambdalisue/fern-renderer-nerdfont.vim'
 Plug 'lambdalisue/fern-git-status.vim'
 
-Plug 'itchyny/lightline.vim' " A light and configurable statusline/tabline for Vim
+Plug 'nvim-lualine/lualine.nvim'
+" Plug 'akinsho/bufferline.nvim'
+Plug 'nanozuki/tabby.nvim'
+
 Plug 'voldikss/vim-floaterm'
 Plug 'amix/open_file_under_cursor.vim' " Open file under cursor when pressing gf
 Plug 'unblevable/quick-scope'
@@ -54,7 +56,8 @@ Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'stevearc/vim-vsnip-snippets'
 
-Plug 'tpope/vim-commentary' " Comment stuff out. Use gcc to comment out a line (takes a count), gc to comment out the target of a motion. gcu uncomments a set of adjacent commented lines.
+Plug 'numToStr/Comment.nvim'
+Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
 Plug 'terryma/vim-expand-region' " Allows you to visually select increasingly larger regions of text using the same key combination
 Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for Vim, CTRL+N is remapped to CTRL+S (due to YankRing)
@@ -62,7 +65,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
 Plug 'tpope/vim-surround'
-Plug 'alvan/vim-closetag'
 Plug 'windwp/nvim-autopairs'
 
 " Colorschemes
@@ -242,6 +244,7 @@ hi! Normal guibg=NONE ctermbg=NONE
 hi! NonText guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 hi! EndOfBuffer guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 hi! LineNr ctermbg=NONE guibg=NONE
+hi! SignColumn ctermbg=NONE guibg=NONE
 
 let g:gruvbox_contrast_dark = 'soft'
 
@@ -345,7 +348,8 @@ map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
-map <leader>t :tabnext<cr>
+map <leader>L :tabnext<cr>
+map <leader>H :tabprevious<cr>
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -924,99 +928,6 @@ let g:multi_cursor_quit_key            = '<Esc>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vim-closetag
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.tsx'
-let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx'
-let g:closetag_filetypes = '"html,xhtml,phtml,tsx'
-let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'
-let g:closetag_regions = {
-    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
-    \ 'javascript.jsx': 'jsxRegion',
-    \ }
-let g:closetag_shortcut = '>'
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => lightline
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-function! MyFiletype()
-  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype . ' ' . WebDevIconsGetFileTypeSymbol() : 'no ft') : ''
-endfunction
-  
-function! MyFileformat()
-  return winwidth(0) > 70 ? (&fileformat . ' ' . WebDevIconsGetFileFormatSymbol()) : ''
-endfunction
-
-function! LspHints() abort
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ':' . luaeval("table.getn(vim.diagnostic.get(0, { severity = {max=vim.diagnostic.severity.INFO} }))")
-  endif
-  return ''
-endfunction
-
-function! LspWarnings() abort
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ' :' . luaeval("table.getn(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN }))")
-  endif
-  return ''
-endfunction
-
-function! LspErrors() abort
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return ':' . luaeval("table.getn(vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR }))")
-  endif
-  return ''
-endfunction
-
-" Statusline
-function! LspStatus() abort
-  if luaeval('#vim.lsp.buf_get_clients() > 0')
-    return luaeval("require('lsp-status').status()")
-  endif
-
-  return ''
-endfunction
-
-
-let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ 'active': {
-      \   'left': [ ['mode', 'paste', 'spell'],
-      \             ['gitbranch', 'readonly', 'filename', 'modified'] ],
-      \   'right': [ [ 'lineinfo' ], ['percent'],
-      \              [ 'lsp_diagnostics_hints', 'lsp_diagnostics_warnings', 'lsp_diagnostics_errors']]
-      \ },
-      \ 'component': {
-      \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
-      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
-      \ },
-      \ 'component_function': {
-      \   'filetype': 'MyFiletype',
-      \   'fileformat': 'MyFileformat',
-      \   'gitbranch': 'FugitiveHead',
-      \   'lsp_diagnostics_hints': 'LspHints',
-      \   'lsp_diagnostics_warnings': 'LspWarnings',
-      \   'lsp_diagnostics_errors': 'LspErrors',
-      \   'lsp_statusline': 'LspStatus'
-      \ },
-      \ 'component_visible_condition': {
-      \   'readonly': '(&filetype!="help"&& &readonly)',
-      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
-      \ },
-      \ 'separator': { 'left': ' ', 'right': ' ' },
-      \ 'subseparator': { 'left': ' ', 'right': ' ' },
-      \ 'tabline': {
-		  \   'left': [ [ 'tabs' ] ],
-		  \   'right': [  ]
-      \ }
-      \ }
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
