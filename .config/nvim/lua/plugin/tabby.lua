@@ -10,6 +10,7 @@ local hl_tabline = util.extract_nvim_hl('TabLine')
 local hl_normal = util.extract_nvim_hl('Normal')
 local hl_tabline_sel = util.extract_nvim_hl('TabLineSel')
 local hl_tabline_fill = util.extract_nvim_hl('TabLineFill')
+local hl_menu = util.extract_nvim_hl('PmenuSel')
 
 local function tab_label(tabid, active)
   local icon = active and '' or ''
@@ -36,9 +37,10 @@ local function win_label(winid, top)
   local fname = require("tabby.filename").tail(winid)
   local extension = vim.fn.fnamemodify(fname, ':e')
   local fileIcon = require'nvim-web-devicons'.get_icon(filename, extension)
-  -- TODO: buffer modified
-  -- local buid = vim.api.nvim_win_get_buf(winid)
-  return string.format(' %s %s %s', icon, fileIcon, filename.unique(winid))
+  local buid = vim.api.nvim_win_get_buf(winid)
+  local is_modified = vim.api.nvim_buf_get_option(buid, 'modified')
+  local modifiedIcon = is_modified and '' or ''
+  return string.format(' %s  %s %s %s', icon, fileIcon, filename.unique(winid), modifiedIcon)
 end
 
 ---@type table<TabbyTablineLayout, TabbyTablineOpt>
@@ -47,18 +49,17 @@ local tabline = {
     hl = 'TabLineFill',
     layout = 'active_wins_at_tail',
     head = {
-      { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg } },
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { '  ', hl = { fg = hl_menu.fg, bg = hl_menu.bg } },
     },
     active_tab = {
       label = function(tabid)
         return {
           tab_label_no_fallback(tabid, true),
-          hl = { fg = hl_tabline_sel.fg, bg = hl_tabline_sel.bg, style = 'bold' },
+          hl = { fg = hl_menu.fg, bg = hl_menu.bg, style = 'bold' },
         }
       end,
-      left_sep = { '', hl = { fg = hl_tabline_sel.bg, bg = hl_tabline_fill.bg } },
-      right_sep = { '', hl = { fg = hl_tabline_sel.bg, bg = hl_tabline_fill.bg } },
+      left_sep = { ' ', hl = { fg = hl_tabline_sel.bg, bg = hl_tabline_fill.bg } },
+      right_sep = { ' ', hl = { fg = hl_tabline_sel.bg, bg = hl_tabline_fill.bg } },
     },
     inactive_tab = {
       label = function(tabid)
@@ -67,18 +68,18 @@ local tabline = {
           hl = { fg = hl_tabline.fg, bg = hl_tabline.bg, style = 'bold' },
         }
       end,
-      left_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
-      right_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      left_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      right_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     top_win = {
       label = function(winid)
         return {
           win_label(winid, true),
-          hl = 'TabLine',
+          hl = 'TabLineFill',
         }
       end,
-      left_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
-      right_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      left_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      right_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     win = {
       label = function(winid)
@@ -87,11 +88,11 @@ local tabline = {
           hl = 'TabLine',
         }
       end,
-      left_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
-      right_sep = { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      left_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      right_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     tail = {
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
       { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg } },
     },
   },
