@@ -65,6 +65,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
 Plug 'tpope/vim-surround'
+Plug 'alvan/vim-closetag'
 Plug 'windwp/nvim-autopairs'
 
 " Colorschemes
@@ -928,6 +929,19 @@ let g:multi_cursor_quit_key            = '<Esc>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim-closetag
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.tsx'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx'
+let g:closetag_filetypes = '"html,xhtml,phtml,tsx'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx,tsx'
+let g:closetag_regions = {
+    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+    \ 'javascript.jsx': 'jsxRegion',
+    \ }
+let g:closetag_shortcut = '>'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
