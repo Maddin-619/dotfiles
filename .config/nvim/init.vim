@@ -2,8 +2,20 @@
 " Pluin import and config
 """"""""""""""""""""""""""""""
 
+if !exists("g:os")
+  if has("win64") || has("win32") ||  has("win16")
+    let g:os = "windows"
+  else
+    let g:os = substitute(system('uname'), '\n', '', '')
+  endif
+endif
+
 " Specify a directory for plugins
-call plug#begin('~/.vim/plugged')
+if (g:os == "windows")
+  call plug#begin('~/AppData/Local/nvim-data/plugged')
+else
+  call plug#begin('~/.vim/plugged')
+endif
 
 Plug 'neovim/nvim-lspconfig'
 
@@ -22,6 +34,11 @@ Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
 Plug 'tami5/lspsaga.nvim'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'williamboman/nvim-lsp-installer'
+Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'tamago324/nlsp-settings.nvim'
 
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
@@ -203,7 +220,11 @@ set tm=500
 " Add a bit extra margin to the left
 " set foldcolumn=1
 
-map <leader>tt :belowright 10split term://zsh<cr>
+if (g:os == "Windows")
+  map <leader>tt :belowright 10split <cr>:terminal<cr>
+else
+  map <leader>tt :belowright 10split term://zsh<cr>
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -510,7 +531,15 @@ endfunction
 "##############################################################################
 
 " Set login shell for :terminal command so aliases work
-set shell=/usr/bin/zsh
+if (g:os == "windows")
+  let &shell = has('win32') ? 'powershell' : 'pwsh'
+  let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+  let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+  let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+  set shellquote= shellxquote=
+else
+  set shell=/usr/bin/zsh
+endif
 
 " When term starts, auto go into insert mode
 autocmd TermOpen * startinsert
@@ -945,21 +974,8 @@ let g:closetag_shortcut = '>'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => lsp config
+" => Autocomplete
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" LSP config (the mappings used in the default file don't quite work right)
-nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <C-h> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nnoremap <silent> <F2> <cmd>lua vim.lsp.buf.rename()<CR>
-
-" Autocomplete
 
 inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
@@ -1002,4 +1018,9 @@ vnoremap <silent><leader>ca :<C-U>lua require('lspsaga.codeaction').range_code_a
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Init Lua Configs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-luafile ~/.config/nvim/lua/init.lua
+
+if (g:os == "windows")
+  luafile ~/AppData/Local/nvim/lua/init.lua
+else
+  luafile ~/.config/nvim/lua/init.lua
+endif

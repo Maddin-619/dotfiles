@@ -1,5 +1,5 @@
-require"lsp.init".setup()
--- require"dap.init"
+require"lsp"
+require"dap-config.init"
 require"plugin.cmp_config"
 require"plugin.trouble"
 require"plugin.treesitter"
