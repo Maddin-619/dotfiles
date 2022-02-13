@@ -1,32 +1,5 @@
-# Copyright (c) 2010 Aldo Cortesi
-# Copyright (c) 2010, 2014 dequis
-# Copyright (c) 2012 Randall Ma
-# Copyright (c) 2012-2014 Tycho Andersen
-# Copyright (c) 2012 Craig Barnes
-# Copyright (c) 2013 horsik
-# Copyright (c) 2013 Tao Sauvage
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 import os
 import subprocess
-import socket
 import requests
 from Xlib import display as xdisplay
 from libqtile import qtile
@@ -34,6 +7,13 @@ from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
 from libqtile import layout, bar, widget, hook
+
+from qtile_extras.popup.toolkit import (
+    PopupRelativeLayout,
+    PopupImage,
+    PopupText
+)
+from qtile_extras.widget.upower import UPowerWidget
 
 from typing import List  # noqa: F401
 
@@ -82,24 +62,76 @@ def get_num_monitors():
     else:
         return num_monitors
 
+def show_power_menu(qtile):
 
-[445, 480, 481, 482, 483, 484, 485]
+    controls = [
+        PopupImage(
+            filename="~/.config/qtile/icons/logout.svg",
+            pos_x=0.15,
+            pos_y=0.1,
+            width=0.1,
+            height=0.5,
+            mouse_callbacks={
+                "Button1": lazy.shutdown()
+            }
+        ),
+        PopupImage(
+            filename="~/.config/qtile/icons/sleep.svg",
+            pos_x=0.45,
+            pos_y=0.1,
+            width=0.1,
+            height=0.5,
+            mouse_callbacks={
+                "Button1": lazy.spawn("systemctl suspend")
+            }
+        ),
+        PopupImage(
+            filename="~/.config/qtile/icons/power-off.svg",
+            pos_x=0.75,
+            pos_y=0.1,
+            width=0.1,
+            height=0.5,
+            highlight="A00000",
+            mouse_callbacks={
+                "Button1": lazy.spawn("shutdown now")
+            }
+        ),
+        PopupText(
+            text="Logout",
+            pos_x=0.1,
+            pos_y=0.7,
+            width=0.2,
+            height=0.2,
+            h_align="center"
+        ),
+        PopupText(
+            text="Sleep",
+            pos_x=0.4,
+            pos_y=0.7,
+            width=0.2,
+            height=0.2,
+            h_align="center"
+        ),
+        PopupText(
+            text="Shutdown",
+            pos_x=0.7,
+            pos_y=0.7,
+            width=0.2,
+            height=0.2,
+            h_align="center"
+        ),
+    ]
 
+    layout = PopupRelativeLayout(
+        qtile,
+        width=1000,
+        height=200,
+        controls=controls,
+        background="00000060",
+        initial_focus=None,
+    )
 
-def getBatteryCapacity():
-    icons = ['', '', '', '', '', '', '', '', '', '']
-    capacity = int(subprocess.check_output(
-        ["cat", "/sys/class/power_supply/" + batteryName + "/capacity"]).decode("utf-8").strip())
-    charging = subprocess.check_output(
-        ["cat", "/sys/class/power_supply/" + batteryName + "/status"]).decode("utf-8").strip()
-    icon = ''
-    if charging == 'Charging':
-        icon = ''
-    if charging == 'Full':
-        icon = ''
-    else:
-        icon = icons[capacity // 10]
-    return '{0} {1} %'.format(icon, capacity)
+    layout.show(centered=True)
 
 
 ##### KEYBINDINGS #####
@@ -127,7 +159,7 @@ keys = [
     ),
     Key(
         [mod, "shift"], "q",
-        lazy.shutdown()                         # Shutdown Qtile
+        lazy.function(show_power_menu)                         # Shutdown Qtile
     ),
     # Switch focus to specific monitor (out of three)
     Key([mod], "w",
@@ -251,15 +283,15 @@ keys = [
 
 
 ##### GROUPS #####
-group_names = [("WWW", {'layout': 'monadtall'}),
-               ("DEV", {'layout': 'monadtall'}),
-               ("SYS", {'layout': 'monadtall'}),
-               ("DOC", {'layout': 'monadtall'}),
-               ("VBOX", {'layout': 'monadtall'}),
-               ("CHAT", {'layout': 'monadtall'}),
-               ("MUS", {'layout': 'monadtall'}),
-               ("VID", {'layout': 'monadtall'}),
-               ("GFX", {'layout': 'floating'})]
+group_names = [("1", {'layout': 'monadtall'}),
+               ("2", {'layout': 'monadtall'}),
+               ("3", {'layout': 'monadtall'}),
+               ("4", {'layout': 'monadtall'}),
+               ("5", {'layout': 'monadtall'}),
+               ("6", {'layout': 'monadtall'}),
+               ("8", {'layout': 'monadtall'}),
+               ("9", {'layout': 'monadtall'}),
+               ("9", {'layout': 'floating'})]
 
 groups = [Group(name, **kwargs) for name, kwargs in group_names]
 
@@ -280,7 +312,7 @@ layout_theme = {"border_width": 2,
 ##### THE LAYOUTS #####
 layouts = [
     layout.Max(),
-    layout.Stack(num_stacks=2),
+    layout.Stack(num_stacks=2, **layout_theme),
     # layout.MonadWide(**layout_theme),
     # layout.Bsp(**layout_theme),
     #layout.Stack(stacks=2, **layout_theme),
@@ -294,23 +326,11 @@ layouts = [
     layout.Floating(**layout_theme)
 ]
 
-##### COLORS #####
-colors = [["#282a36", "#282a36"],  # panel background
-          ["#434758", "#434758"],  # background for current screen tab
-          ["#ffffff", "#ffffff"],  # font color for group names
-          ["#ff5555", "#ff5555"],  # background color for layout widget
-          ["#3C6D7E", "#3C6D7E"],  # dark green gradiant for other screen tabs
-          ["#0093DD", "#0093DD"]]  # background color for pacman widget
-
-##### PROMPT #####
-prompt = "{0}@{1}: ".format(os.environ["USER"], socket.gethostname())
-
 ##### DEFAULT WIDGET SETTINGS #####
 widget_defaults = dict(
-    font="MesloLGM Nerd Font",
-    fontsize=12,
+    font="Hack Nerd Font",
+    fontsize=14,
     padding=2,
-    background=colors[2]
 )
 extension_defaults = widget_defaults.copy()
 
@@ -323,187 +343,81 @@ except:
 
 
 def init_widgets_list():
+    sep_props = {
+        "linewidth": 1,
+        "foreground": "#ffffff"
+    }
     widgets_list = [
         widget.Sep(
-            linewidth=0,
             padding=6,
-            foreground=colors[2],
-            background=colors[0]
+            linewidth=0
         ),
         widget.GroupBox(
-            fontsize=12,
-            margin_y=4,
-            margin_x=0,
-            padding_y=4,
-            padding_x=4,
             borderwidth=3,
-            active=colors[2],
-            inactive=colors[2],
-            rounded=False,
-            highlight_method="block",
-            this_current_screen_border=colors[4],
-            this_screen_border=colors[1],
-            other_current_screen_border=colors[0],
-            other_screen_border=colors[0],
-            foreground=colors[2],
-            background=colors[0]
-        ),
-        widget.Prompt(
-            prompt=prompt,
-            padding=10,
-            foreground=colors[3],
-            background=colors[1]
+            inactive="#ffffff.7",
+            this_current_screen_border="#1793D1",
+            other_screen_border="#1793D1.5",
+            this_screen_border="#ffffff.7",
+            other_current_screen_border="#ffffff.3",
         ),
         widget.Sep(
-            linewidth=0,
             padding=10,
-            foreground=colors[2],
-            background=colors[0]
+            **sep_props,
         ),
         widget.WindowName(
-            foreground=colors[4],
-            background=colors[0],
             padding=5
         ),
         widget.Notify(
             padding=5,
             default_timeout=5,
-            background=colors[5],
-            foreground=colors[2]
         ),
+        widget.WidgetBox(widgets=[
+            widget.Memory(
+                padding=5
+            ),
+            widget.Sep(**sep_props),
+            widget.CPUGraph(
+                type='line'
+            ),
+            widget.Sep(**sep_props),
+            widget.Net(
+                padding=5,
+                format="{down} ↓↑ {up}"
+            ),
+            widget.Sep(**sep_props),
+            ]
+        ),
+        UPowerWidget(
+            border_charge_colour="79b807",
+            border_colour="00000000",
+            border_critical_colour="ea625a",
+        ),
+        widget.Sep(**sep_props),
         widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[0],
-            foreground=colors[5],
-            padding=0,
-            fontsize=18
-        ),
-        widget.TextBox(
-            text=" 🖬",
-            foreground=colors[2],
-            background=colors[5],
-            padding=0,
-            fontsize=14
-        ),
-        widget.Memory(
-            foreground=colors[2],
-            background=colors[5],
-            padding=5
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[5],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
-        widget.CPUGraph(
-            background=colors[4],
-            samples=90,
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[4],
-            foreground=colors[5],
-            padding=0,
-            fontsize=18
-        ),
-        widget.TextBox(
-            text=" ↯",
-            foreground=colors[2],
-            background=colors[5],
-            padding=0,
-            fontsize=14
-        ),
-        widget.Net(
-            foreground=colors[2],
-            background=colors[5],
-            padding=5
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[5],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
-        widget.GenPollText(
-            func=getBatteryCapacity,
-            background=colors[4],
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[4],
-            foreground=colors[5],
-            padding=0,
-            fontsize=18
-        ),
-        widget.TextBox(
-            text=" 🔊",
-            foreground=colors[2],
-            background=colors[5],
+            text="🔊",
             padding=0,
             fontsize=14
         ),
         widget.PulseVolume(
-            foreground=colors[2],
-            background=colors[5],
             padding=5,
             limit_max_volume=True,
             volume_app="pavucontrol-qt"
         ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[5],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
+        widget.Sep(**sep_props),
         widget.Backlight(
             backlight_name=backlightName,
             change_command='light -S {0}',
             fmt=' {}',
-            foreground=colors[2],
-            background=colors[4],
             padding=5,
         ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[4],
-            foreground=colors[5],
-            padding=0,
-            fontsize=18
-        ),
+        widget.Sep(**sep_props),
         widget.CurrentLayoutIcon(
             custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
-            foreground=colors[2],
-            background=colors[5],
             padding=0,
             scale=0.7
         ),
-        widget.CurrentLayout(
-            foreground=colors[2],
-            background=colors[5],
-            padding=5
-        ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[5],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
+        widget.Sep(**sep_props),
         widget.Wttr(
-            foreground=colors[2],
-            background=colors[4],
             format=1,
             location={
                 public_ip: public_ip,
@@ -513,60 +427,28 @@ def init_widgets_list():
                 'Button1': lambda: qtile.cmd_spawn(myTerm + ' --hold -e wttr ' + public_ip)
             }
         ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[4],
-            foreground=colors[5],
-            padding=0,
-            fontsize=18
-        ),
-        widget.TextBox(
-            text=" 🕒",
-            foreground=colors[2],
-            background=colors[5],
-            padding=5,
-            fontsize=14
-        ),
+        widget.Sep(**sep_props),
         widget.Clock(
-            foreground=colors[2],
-            background=colors[5],
-            format="%a, %b %d - %H:%M"
+            format="%a, %b %d - %H:%M",
+            padding=2,
         ),
-        widget.TextBox(
-            text='\ue0b2',
-            font='Hack Nerd Font',
-            background=colors[5],
-            foreground=colors[4],
-            padding=0,
-            fontsize=18
-        ),
+        widget.Sep(**sep_props),
         widget.KeyboardLayout(
             configured_keyboards=['us', 'de'],
-            foreground=colors[2],
-            background=colors[4],
             padding=5
         ),
-        widget.Sep(
-            linewidth=0,
-            padding=5,
-            foreground=colors[0],
-            background=colors[4]
-        ),
+        widget.Sep(**sep_props),
         widget.Systray(
-            background=colors[0],
             padding=5
         ),
         widget.Sep(
-            linewidth=0,
+            linewidth= 0,
             padding=7,
-            foreground=colors[0],
-            background=colors[0]
         ),
     ]
     return widgets_list
 
-# SCREENS ##### (TRIPLE MONITOR SETUP or ONE MONITOR)
+# SCREENS ##### (MULTI MONITOR SETUP or ONE MONITOR)
 
 
 def init_widgets_primary_screen():
@@ -576,24 +458,29 @@ def init_widgets_primary_screen():
 
 def init_widgets_secoundary_screen():
     widgets = init_widgets_list()
-    return widgets[:-2]
+    return widgets[:-3]
 
 
 def init_screens(num_monitors):
+    screen_props = {
+        "opacity": 0.95,
+        "size": 22,
+        "background": "#ffffff.1"
+    }
     if num_monitors == 1:
-        return [Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
+        return [Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), **screen_props))]
     else:
         screens = [Screen(top=bar.Bar(
-            widgets=init_widgets_primary_screen(), opacity=0.95, size=20))]
+            widgets=init_widgets_primary_screen(), **screen_props))]
         for _ in range(num_monitors - 1):
             screens.append(Screen(top=bar.Bar(
-                widgets=init_widgets_secoundary_screen(), opacity=0.95, size=20)))
+                widgets=init_widgets_secoundary_screen(), **screen_props)))
         return screens
 
 
 if __name__ in ["config", "__main__"]:
     num_monitors = get_num_monitors()
-    logger.warning('number of screens: {0}'.format(num_monitors))
+    logger.info('number of screens: {0}'.format(num_monitors))
     screens = init_screens(num_monitors)
 
 ##### DRAG FLOATING WINDOWS #####
@@ -622,8 +509,6 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 
 ##### STARTUP APPLICATIONS #####
-
-
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~')
