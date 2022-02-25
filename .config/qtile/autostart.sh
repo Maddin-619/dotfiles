@@ -7,3 +7,4 @@ blueman-tray &
 optimus-manager-qt &
 powerkit &
 indicator-sound-switcher &
+clight &
