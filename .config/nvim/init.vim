@@ -229,7 +229,6 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
 
 lua << EOF
 require'nvim-web-devicons'.setup {
@@ -252,10 +251,6 @@ syntax on
 
 set t_Co=256
 
-set background=dark
-let g:gruvbox_italic=1
-let g:gruvbox_invert_selection=0
-
 let g:nvcode_termcolors=256
 try
     colorscheme nvcode
@@ -267,8 +262,6 @@ hi! NonText guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 hi! EndOfBuffer guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
 hi! LineNr ctermbg=NONE guibg=NONE
 hi! SignColumn ctermbg=NONE guibg=NONE
-
-let g:gruvbox_contrast_dark = 'soft'
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -404,11 +397,6 @@ au BufRead,BufNewFile Jenkinsfile set filetype=groovy
 " Always show the status line
 set laststatus=2
 
-" Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
-" set statusline=%<%f\ %h%m%r%{FugitiveStatusline()}%=%-14.(%l,%c%V%)\ %P
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -420,13 +408,6 @@ nmap <C-j> mz:m+<cr>`z
 nmap <C-k> mz:m-2<cr>`z
 vmap <C-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <C-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-if has("mac") || has("macunix")
-  nmap <D-j> <C-j>
-  nmap <D-k> <C-k>
-  vmap <D-j> <C-j>
-  vmap <D-k> <C-k>
-endif
 
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
