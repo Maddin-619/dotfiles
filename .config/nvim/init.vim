@@ -26,7 +26,6 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-calc'
 Plug 'ray-x/cmp-treesitter'
 Plug 'hrsh7th/cmp-emoji'
-Plug 'f3fora/cmp-spell'
 Plug 'hrsh7th/nvim-cmp'
 
 " For vsnip users.
@@ -43,7 +42,7 @@ Plug 'tamago324/nlsp-settings.nvim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
-
+Plug 'Pocco81/DAPInstall.nvim'
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
@@ -743,7 +742,8 @@ command! -bang -nargs=* Rg
 
 " Ripgrep advanced
 function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --glob !.git %s || true'
+  " let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden --glob !.git %s || true'
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case --hidden -- %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))
   let reload_command = printf(command_fmt, '{q}')
   let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}

@@ -8,14 +8,23 @@ local formatting = null_ls.builtins.formatting
 -- https://github.com/jose-elias-alvarez/null-ls.nvim/tree/main/lua/null-ls/builtins/diagnostics
 local diagnostics = null_ls.builtins.diagnostics
 
+local command_ext = ""
+if vim.loop.os_uname().sysname == "Windows_NT" then
+  command_ext = ".cmd"
+end
+
 null_ls.setup({
 	debug = false,
 	sources = {
-		formatting.prettier,
+     formatting.prettier.with({
+         filetypes = { "html", "json", "yaml", "markdown" },
+         command = "prettier" .. command_ext,
+     }),
     formatting.eslint_d,
 		formatting.black.with({ extra_args = { "--fast" } }),
 		formatting.stylua,
     diagnostics.eslint_d,
+    diagnostics.eslint_d.with({ command = "eslint_d" .. command_ext })
     -- diagnostics.flake8
 	},
   on_attach = function(client)
