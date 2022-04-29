@@ -42,7 +42,7 @@ Plug 'tamago324/nlsp-settings.nvim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
-Plug 'Pocco81/DAPInstall.nvim'
+Plug 'Pocco81/dap-buddy.nvim'
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
@@ -546,8 +546,7 @@ elseif has("unix")
     set clipboard=unnamedplus
 endif
 
-let uname = substitute(system('uname'),'\n','','')
-if uname == 'Linux'
+if g:os == 'Linux'
     let lines = readfile("/proc/version")
     if lines[0] =~ "Microsoft"
       set clipboard=unnamed
