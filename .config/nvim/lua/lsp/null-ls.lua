@@ -20,7 +20,7 @@ null_ls.setup({
          filetypes = { "html", "json", "yaml", "markdown" },
          command = "prettier" .. command_ext,
      }),
-    formatting.eslint_d,
+    formatting.eslint_d.with({ command = "eslint_d" .. command_ext }),
 		formatting.black.with({ extra_args = { "--fast" } }),
 		formatting.stylua,
     diagnostics.eslint_d,
