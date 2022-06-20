@@ -30,7 +30,6 @@ Plug 'hrsh7th/nvim-cmp'
 
 " For vsnip users.
 Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/vim-vsnip'
 
 Plug 'tami5/lspsaga.nvim'
 
