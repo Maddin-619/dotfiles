@@ -91,10 +91,6 @@ local tabline = {
       left_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
       right_sep = { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
-    tail = {
-      { ' ', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
-      { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg } },
-    },
   },
   active_wins_at_end = {
     hl = 'TabLineFill',
