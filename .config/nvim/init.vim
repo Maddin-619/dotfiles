@@ -41,7 +41,9 @@ Plug 'tamago324/nlsp-settings.nvim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
-Plug 'Pocco81/dap-buddy.nvim'
+" Not ready
+" Plug 'Pocco81/dap-buddy.nvim'
+Plug 'ravenxrz/DAPInstall.nvim'
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
