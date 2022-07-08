@@ -6,34 +6,24 @@ from libqtile import qtile
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
-from libqtile import layout, bar, widget, hook
+from libqtile import layout, bar, widget, hook, extension
 
-from qtile_extras.popup.toolkit import (
-    PopupRelativeLayout,
-    PopupImage,
-    PopupText
-)
+from qtile_extras.popup.toolkit import PopupRelativeLayout, PopupImage, PopupText
 from qtile_extras.widget.upower import UPowerWidget
 
 from typing import List  # noqa: F401
 
 ##### DEFINING SOME VARIABLES #####
-mod = "mod4"                                     # Sets mod key to SUPER/WINDOWS
-myTerm = "alacritty"                                    # My terminal of choice
+mod = "mod4"  # Sets mod key to SUPER/WINDOWS
+myTerm = "alacritty"  # My terminal of choice
 # The Qtile config file location
 myConfig = "/home/martin/.config/qtile/config.py"
 
-batteryNames = ['BAT0', 'cw2015-battery']
-backlightNames = ['intel_backlight', 'edp-backlight']
+backlightNames = ["intel_backlight", "edp-backlight"]
 
 #### HELPER FUNCTIONS ####
 
-batteryName = ''
-for name in batteryNames:
-    if os.path.exists("/sys/class/power_supply/" + name):
-        batteryName = name
-
-backlightName = ''
+backlightName = ""
 for name in backlightNames:
     if os.path.exists("/sys/class/backlight/" + name):
         backlightName = name
@@ -47,8 +37,7 @@ def get_num_monitors():
         resources = screen.root.xrandr_get_screen_resources()
 
         for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(
-                output, resources.config_timestamp)
+            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
             preferred = False
             if hasattr(monitor, "preferred"):
                 preferred = monitor.preferred
@@ -62,6 +51,7 @@ def get_num_monitors():
     else:
         return num_monitors
 
+
 def show_power_menu(qtile):
 
     controls = [
@@ -71,9 +61,7 @@ def show_power_menu(qtile):
             pos_y=0.1,
             width=0.1,
             height=0.5,
-            mouse_callbacks={
-                "Button1": lazy.shutdown()
-            }
+            mouse_callbacks={"Button1": lazy.shutdown()},
         ),
         PopupImage(
             filename="~/.config/qtile/icons/sleep.svg",
@@ -81,9 +69,7 @@ def show_power_menu(qtile):
             pos_y=0.1,
             width=0.1,
             height=0.5,
-            mouse_callbacks={
-                "Button1": lazy.spawn("systemctl suspend")
-            }
+            mouse_callbacks={"Button1": lazy.spawn("systemctl suspend")},
         ),
         PopupImage(
             filename="~/.config/qtile/icons/power-off.svg",
@@ -92,25 +78,13 @@ def show_power_menu(qtile):
             width=0.1,
             height=0.5,
             highlight="A00000",
-            mouse_callbacks={
-                "Button1": lazy.spawn("shutdown now")
-            }
+            mouse_callbacks={"Button1": lazy.spawn("shutdown now")},
         ),
         PopupText(
-            text="Logout",
-            pos_x=0.1,
-            pos_y=0.7,
-            width=0.2,
-            height=0.2,
-            h_align="center"
+            text="Logout", pos_x=0.1, pos_y=0.7, width=0.2, height=0.2, h_align="center"
         ),
         PopupText(
-            text="Sleep",
-            pos_x=0.4,
-            pos_y=0.7,
-            width=0.2,
-            height=0.2,
-            h_align="center"
+            text="Sleep", pos_x=0.4, pos_y=0.7, width=0.2, height=0.2, h_align="center"
         ),
         PopupText(
             text="Shutdown",
@@ -118,7 +92,7 @@ def show_power_menu(qtile):
             pos_y=0.7,
             width=0.2,
             height=0.2,
-            h_align="center"
+            h_align="center",
         ),
     ]
 
@@ -129,6 +103,7 @@ def show_power_menu(qtile):
         controls=controls,
         background="00000060",
         initial_focus=None,
+        keymap={},
     )
 
     layout.show(centered=True)
@@ -137,161 +112,144 @@ def show_power_menu(qtile):
 ##### KEYBINDINGS #####
 keys = [
     # The essentials
+    Key([mod], "Return", lazy.spawn(myTerm)),  # Open terminal
     Key(
-        [mod], "Return",
-        lazy.spawn(myTerm)                      # Open terminal
-    ),
-    Key(
-        [mod, "shift"], "Return",              # Dmenu Run Launcher
-        lazy.spawn("dmenu_run -p 'Run: '")
-    ),
-    Key(
-        [mod], "Tab",
-        lazy.next_layout()                      # Toggle through layouts
-    ),
-    Key(
-        [mod, "shift"], "c",
-        lazy.window.kill()                      # Kill active window
-    ),
-    Key(
-        [mod, "shift"], "r",
-        lazy.restart()                          # Restart Qtile
-    ),
-    Key(
-        [mod, "shift"], "q",
-        lazy.function(show_power_menu)                         # Shutdown Qtile
-    ),
+        [mod, "shift"],
+        "Return",
+        lazy.spawn(
+            "rofi -combi-modi window,drun,ssh -theme solarized_alternate -font 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
+        ),
+    ),  # Run Launcher
+    Key([mod], "q", lazy.shutdown()),
+    Key([mod], "Tab", lazy.next_layout()),  # Toggle through layouts
+    Key([mod, "shift"], "c", lazy.window.kill()),  # Kill active window
+    Key([mod, "shift"], "r", lazy.restart()),  # Restart Qtile
+    Key([mod, "shift"], "q", lazy.function(show_power_menu)),  # Shutdown Qtile
     # Switch focus to specific monitor (out of three)
-    Key([mod], "w",
+    Key(
+        [mod],
+        "w",
         # Keyboard focus to screen(0)
-        lazy.to_screen(0)
-        ),
-    Key([mod], "e",
+        lazy.to_screen(0),
+    ),
+    Key(
+        [mod],
+        "e",
         # Keyboard focus to screen(1)
-        lazy.to_screen(1)
-        ),
-    Key([mod], "r",
+        lazy.to_screen(1),
+    ),
+    Key(
+        [mod],
+        "r",
         # Keyboard focus to screen(2)
-        lazy.to_screen(2)
-        ),
+        lazy.to_screen(2),
+    ),
     # Switch focus of monitors
-    Key([mod], "period",
-        lazy.next_screen()                      # Move monitor focus to next screen
-        ),
-    Key([mod], "comma",
-        lazy.prev_screen()                      # Move monitor focus to prev screen
-        ),
+    Key([mod], "period", lazy.next_screen()),  # Move monitor focus to next screen
+    Key([mod], "comma", lazy.prev_screen()),  # Move monitor focus to prev screen
     # Treetab controls
-    Key([mod, "control"], "k",
-        lazy.layout.section_up()                # Move up a section in treetab
-        ),
-    Key([mod, "control"], "j",
-        lazy.layout.section_down()              # Move down a section in treetab
-        ),
+    Key(
+        [mod, "control"], "k", lazy.layout.section_up()  # Move up a section in treetab
+    ),
+    Key(
+        [mod, "control"],
+        "j",
+        lazy.layout.section_down(),  # Move down a section in treetab
+    ),
     # Window controls
+    Key([mod], "k", lazy.layout.down()),  # Switch between windows in current stack pane
+    Key([mod], "j", lazy.layout.up()),  # Switch between windows in current stack pane
     Key(
-        [mod], "k",
-        lazy.layout.down()                      # Switch between windows in current stack pane
+        [mod, "shift"],
+        "k",
+        lazy.layout.shuffle_down(),  # Move windows down in current stack
     ),
     Key(
-        [mod], "j",
-        lazy.layout.up()                        # Switch between windows in current stack pane
+        [mod, "shift"],
+        "j",
+        lazy.layout.shuffle_up(),  # Move windows up in current stack
     ),
     Key(
-        [mod, "shift"], "k",
-        lazy.layout.shuffle_down()              # Move windows down in current stack
+        [mod],
+        "h",
+        lazy.layout.grow(),  # Grow size of current window (XmonadTall)
+        lazy.layout.increase_nmaster(),  # Increase number in master pane (Tile)
     ),
     Key(
-        [mod, "shift"], "j",
-        lazy.layout.shuffle_up()                # Move windows up in current stack
+        [mod],
+        "l",
+        lazy.layout.shrink(),  # Shrink size of current window (XmonadTall)
+        lazy.layout.decrease_nmaster(),  # Decrease number in master pane (Tile)
     ),
     Key(
-        [mod], "h",
-        lazy.layout.grow(),                     # Grow size of current window (XmonadTall)
-        lazy.layout.increase_nmaster(),         # Increase number in master pane (Tile)
+        [mod],
+        "n",
+        lazy.layout.normalize(),  # Restore all windows to default size ratios
     ),
     Key(
-        [mod], "l",
-        lazy.layout.shrink(),                   # Shrink size of current window (XmonadTall)
-        lazy.layout.decrease_nmaster(),         # Decrease number in master pane (Tile)
-    ),
-    Key(
-        [mod], "n",
-        lazy.layout.normalize()                 # Restore all windows to default size ratios
-    ),
-    Key(
-        [mod], "m",
+        [mod],
+        "m",
         # Toggle a window between minimum and maximum sizes
-        lazy.layout.maximize()
+        lazy.layout.maximize(),
     ),
-    Key(
-        [mod, "shift"], "f",
-        lazy.window.toggle_floating()           # Toggle floating
-    ),
+    Key([mod, "shift"], "f", lazy.window.toggle_floating()),  # Toggle floating
     # Stack controls
     Key(
-        [mod, "shift"], "space",
-        lazy.layout.rotate(),                   # Swap panes of split stack (Stack)
+        [mod, "shift"],
+        "space",
+        lazy.layout.rotate(),  # Swap panes of split stack (Stack)
         # Switch which side main pane occupies (XmonadTall)
-        lazy.layout.flip()
+        lazy.layout.flip(),
     ),
     Key(
-        [mod], "space",
+        [mod],
+        "space",
         # Switch window focus to other pane(s) of stack
-        lazy.layout.next()
+        lazy.layout.next(),
     ),
     Key(
-        [mod, "control"], "Return",
+        [mod, "control"],
+        "Return",
         # Toggle between split and unsplit sides of stack
-        lazy.layout.toggle_split()
+        lazy.layout.toggle_split(),
     ),
     # Dmenu scripts launched with ALT + CTRL + KEY
-    Key(
-        ["mod1", "control"], "e",
-        lazy.spawn("./.dmenu/dmenu-edit-configs.sh")
-    ),
+    Key(["mod1", "control"], "e", lazy.spawn("./.dmenu/dmenu-edit-configs.sh")),
     # My applications launched with SUPER + ALT + KEY
-    Key(
-        [mod], "s",
-        lazy.spawn('pavucontrol-qt')
-    ),
+    Key([mod], "s", lazy.spawn("pavucontrol-qt")),
     # Special Keybindings
     Key(
-        [], "XF86AudioRaiseVolume",
+        [],
+        "XF86AudioRaiseVolume",
         lazy.spawn(
-            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%"')
+            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%"'
+        ),
     ),
     Key(
-        [], "XF86AudioLowerVolume",
+        [],
+        "XF86AudioLowerVolume",
         lazy.spawn(
-            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%"')
+            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%"'
+        ),
     ),
-    Key(
-        [], "XF86AudioMute",
-        lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")
-    ),
-    Key(
-        [], "XF86MonBrightnessUp",
-        lazy.spawn('light -A 10')
-    ),
-    Key(
-        [], "XF86MonBrightnessDown",
-        lazy.spawn(
-            'light -U 10')
-    ),
+    Key([], "XF86AudioMute", lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10")),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10")),
 ]
 
 
 ##### GROUPS #####
-group_names = [("1", {'layout': 'monadtall'}),
-               ("2", {'layout': 'monadtall'}),
-               ("3", {'layout': 'monadtall'}),
-               ("4", {'layout': 'monadtall'}),
-               ("5", {'layout': 'monadtall'}),
-               ("6", {'layout': 'monadtall'}),
-               ("8", {'layout': 'monadtall'}),
-               ("9", {'layout': 'monadtall'}),
-               ("9", {'layout': 'floating'})]
+group_names = [
+    ("1", {"layout": "monadtall"}),
+    ("2", {"layout": "monadtall"}),
+    ("3", {"layout": "monadtall"}),
+    ("4", {"layout": "monadtall"}),
+    ("5", {"layout": "monadtall"}),
+    ("6", {"layout": "monadtall"}),
+    ("8", {"layout": "monadtall"}),
+    ("9", {"layout": "monadtall"}),
+    ("9", {"layout": "floating"}),
+]
 
 groups = [Group(name, **kwargs) for name, kwargs in group_names]
 
@@ -303,11 +261,12 @@ for i, (name, kwargs) in enumerate(group_names, 1):
 
 
 ##### DEFAULT THEME SETTINGS FOR LAYOUTS #####
-layout_theme = {"border_width": 2,
-                "margin": 4,
-                "border_focus": "#1793D1",
-                "border_normal": "#1D2330"
-                }
+layout_theme = {
+    "border_width": 2,
+    "margin": 4,
+    "border_focus": "#1793D1",
+    "border_normal": "#1D2330",
+}
 
 ##### THE LAYOUTS #####
 layouts = [
@@ -315,15 +274,15 @@ layouts = [
     layout.Stack(num_stacks=2, **layout_theme),
     # layout.MonadWide(**layout_theme),
     # layout.Bsp(**layout_theme),
-    #layout.Stack(stacks=2, **layout_theme),
+    # layout.Stack(stacks=2, **layout_theme),
     # layout.Columns(**layout_theme),
     # layout.RatioTile(**layout_theme),
     # layout.VerticalTile(**layout_theme),
-    #layout.Tile(shift_windows=True, **layout_theme),
+    # layout.Tile(shift_windows=True, **layout_theme),
     # layout.Matrix(**layout_theme),
     # layout.Zoomy(**layout_theme),
     layout.MonadTall(**layout_theme),
-    layout.Floating(**layout_theme)
+    layout.Floating(**layout_theme),
 ]
 
 ##### DEFAULT WIDGET SETTINGS #####
@@ -335,7 +294,7 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 
 try:
-    public_ip = requests.get('https://ifconfig.me').text
+    public_ip = requests.get("https://ifconfig.me").text
 except:
     public_ip = "Heumaden"
 
@@ -343,15 +302,9 @@ except:
 
 
 def init_widgets_list():
-    sep_props = {
-        "linewidth": 1,
-        "foreground": "#ffffff"
-    }
+    sep_props = {"linewidth": 1, "foreground": "#ffffff"}
     widgets_list = [
-        widget.Sep(
-            padding=6,
-            linewidth=0
-        ),
+        widget.Sep(padding=6, linewidth=0),
         widget.GroupBox(
             borderwidth=3,
             inactive="#ffffff.7",
@@ -364,68 +317,56 @@ def init_widgets_list():
             padding=10,
             **sep_props,
         ),
-        widget.WindowName(
-            padding=5
-        ),
+        widget.WindowName(padding=5),
         widget.Notify(
             padding=5,
             default_timeout=5,
         ),
-        widget.WidgetBox(widgets=[
-            widget.Memory(
-                padding=5
-            ),
-            widget.Sep(**sep_props),
-            widget.CPUGraph(
-                type='line'
-            ),
-            widget.Sep(**sep_props),
-            widget.Net(
-                padding=5,
-                format="{down} ↓↑ {up}"
-            ),
-            widget.Sep(**sep_props),
+        widget.WidgetBox(
+            widgets=[
+                widget.Memory(padding=5),
+                widget.Sep(**sep_props),
+                widget.CPUGraph(type="line"),
+                widget.Sep(**sep_props),
+                widget.Net(padding=5, format="{down} ↓↑ {up}"),
+                widget.Sep(**sep_props),
             ]
         ),
         UPowerWidget(
             border_charge_colour="79b807",
-            border_colour="00000000",
+            border_colour="ffffff",
             border_critical_colour="ea625a",
         ),
         widget.Sep(**sep_props),
-        widget.TextBox(
-            text="🔊",
-            padding=0,
-            fontsize=14
-        ),
+        widget.TextBox(text="🔊", padding=0, fontsize=14),
         widget.PulseVolume(
-            padding=5,
-            limit_max_volume=True,
-            volume_app="pavucontrol-qt"
+            padding=5, limit_max_volume=True, volume_app="pavucontrol-qt"
         ),
         widget.Sep(**sep_props),
         widget.Backlight(
             backlight_name=backlightName,
-            change_command='light -S {0}',
-            fmt=' {}',
+            change_command="light -S {0}",
+            fmt=" {}",
             padding=5,
         ),
         widget.Sep(**sep_props),
         widget.CurrentLayoutIcon(
             custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
             padding=0,
-            scale=0.7
+            scale=0.7,
         ),
         widget.Sep(**sep_props),
         widget.Wttr(
             format=1,
             location={
                 public_ip: public_ip,
-                'Stuttgart': 'Stuttgart',
+                "Stuttgart": "Stuttgart",
             },
             mouse_callbacks={
-                'Button1': lambda: qtile.cmd_spawn(myTerm + ' --hold -e wttr ' + public_ip)
-            }
+                "Button1": lambda: qtile.cmd_spawn(
+                    myTerm + " --hold -e wttr " + public_ip
+                )
+            },
         ),
         widget.Sep(**sep_props),
         widget.Clock(
@@ -433,20 +374,16 @@ def init_widgets_list():
             padding=2,
         ),
         widget.Sep(**sep_props),
-        widget.KeyboardLayout(
-            configured_keyboards=['us', 'de'],
-            padding=5
-        ),
+        widget.KeyboardLayout(configured_keyboards=["us", "de"], padding=5),
         widget.Sep(**sep_props),
-        widget.Systray(
-            padding=5
-        ),
+        widget.Systray(padding=5),
         widget.Sep(
-            linewidth= 0,
+            linewidth=0,
             padding=7,
         ),
     ]
     return widgets_list
+
 
 # SCREENS ##### (MULTI MONITOR SETUP or ONE MONITOR)
 
@@ -462,35 +399,44 @@ def init_widgets_secoundary_screen():
 
 
 def init_screens(num_monitors):
-    screen_props = {
-        "opacity": 0.95,
-        "size": 22,
-        "background": "#ffffff.1"
-    }
+    screen_props = {"opacity": 0.95, "size": 22, "background": "#ffffff.1"}
     if num_monitors == 1:
-        return [Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), **screen_props))]
+        return [
+            Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), **screen_props))
+        ]
     else:
-        screens = [Screen(top=bar.Bar(
-            widgets=init_widgets_primary_screen(), **screen_props))]
+        screens = [
+            Screen(top=bar.Bar(widgets=init_widgets_primary_screen(), **screen_props))
+        ]
         for _ in range(num_monitors - 1):
-            screens.append(Screen(top=bar.Bar(
-                widgets=init_widgets_secoundary_screen(), **screen_props)))
+            screens.append(
+                Screen(
+                    top=bar.Bar(
+                        widgets=init_widgets_secoundary_screen(), **screen_props
+                    )
+                )
+            )
         return screens
 
 
 if __name__ in ["config", "__main__"]:
     num_monitors = get_num_monitors()
-    logger.info('number of screens: {0}'.format(num_monitors))
+    logger.info("number of screens: {0}".format(num_monitors))
     screens = init_screens(num_monitors)
 
 ##### DRAG FLOATING WINDOWS #####
 
 mouse = [
-    Drag([mod], "Button1", lazy.window.set_position_floating(),
-         start=lazy.window.get_position()),
-    Drag([mod], "Button3", lazy.window.set_size_floating(),
-         start=lazy.window.get_size()),
-    Click([mod], "Button2", lazy.window.bring_to_front())
+    Drag(
+        [mod],
+        "Button1",
+        lazy.window.set_position_floating(),
+        start=lazy.window.get_position(),
+    ),
+    Drag(
+        [mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()
+    ),
+    Click([mod], "Button2", lazy.window.bring_to_front()),
 ]
 
 dgroups_key_binder = None
@@ -500,10 +446,12 @@ follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
 
-floating_layout = layout.Floating(float_rules=[
-    *layout.Floating.default_float_rules,
-    Match(title="emulator"),
-])
+floating_layout = layout.Floating(
+    float_rules=[
+        *layout.Floating.default_float_rules,
+        Match(title="emulator"),
+    ]
+)
 
 auto_fullscreen = True
 focus_on_window_activation = "smart"
@@ -511,8 +459,8 @@ focus_on_window_activation = "smart"
 ##### STARTUP APPLICATIONS #####
 @hook.subscribe.startup_once
 def start_once():
-    home = os.path.expanduser('~')
-    subprocess.call([home + '/.config/qtile/autostart.sh'])
+    home = os.path.expanduser("~")
+    subprocess.call([home + "/.config/qtile/autostart.sh"])
 
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
