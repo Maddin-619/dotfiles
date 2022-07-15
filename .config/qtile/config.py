@@ -120,11 +120,11 @@ keys = [
             "rofi -combi-modi window,drun,ssh -theme solarized_alternate -font 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
         ),
     ),  # Run Launcher
-    Key([mod], "q", lazy.shutdown()),
     Key([mod], "Tab", lazy.next_layout()),  # Toggle through layouts
     Key([mod, "shift"], "c", lazy.window.kill()),  # Kill active window
     Key([mod, "shift"], "r", lazy.restart()),  # Restart Qtile
-    Key([mod, "shift"], "q", lazy.function(show_power_menu)),  # Shutdown Qtile
+    Key([mod, "shift"], "r", lazy.restart()),  # Restart Qtile
+    Key([mod], "z", lazy.spawn("xscreensaver-command -lock")),  # Lock Session
     # Switch focus to specific monitor (out of three)
     Key(
         [mod],
@@ -334,7 +334,7 @@ def init_widgets_list():
         ),
         UPowerWidget(
             border_charge_colour="79b807",
-            border_colour="ffffff",
+            border_colour="ffffff.5",
             border_critical_colour="ea625a",
         ),
         widget.Sep(**sep_props),
