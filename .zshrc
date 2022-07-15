@@ -83,7 +83,6 @@ plugins=(
   git
   git-flow
   history-substring-search
-  jira
   node
   mvn
   npm
@@ -123,11 +122,7 @@ if grep -q Microsoft /proc/version; then
   export DOCKER_HOST="tcp://localhost:2375"
 fi
 
-export JIRA_URL="https://jira.ite-si.de"
-export JIRA_NAME="mbrenner"
-export JIRA_PREFIX="IIOT-"
 export PATH=$PATH:$HOME/.local/bin
-
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # Compilation flags
@@ -151,13 +146,16 @@ alias la='exa -la'
 alias aur="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
 alias stfu="sudo shutdown now"
 
-if [ -s "$HOME/.nvm/nvm.sh" ]; then
-  export NVM_DIR="$HOME/.nvm"
-  nvm_cmds=(nvm node npm yarn)
-  for cmd in $nvm_cmds ; do
-    alias $cmd="unalias $nvm_cmds && unset nvm_cmds && . $NVM_DIR/nvm.sh && $cmd"
-  done
-fi
+# NVM - Node Version Manager
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# if [ -s "$HOME/.nvm/nvm.sh" ]; then
+#   export NVM_DIR="$HOME/.nvm"
+#   nvm_cmds=(nvm node npm yarn)
+#   for cmd in $nvm_cmds ; do
+#     alias $cmd="unalias $nvm_cmds && unset nvm_cmds && . $NVM_DIR/nvm.sh && $cmd"
+#   done
+# fi
+[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh  # This loads NVM
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -171,13 +169,9 @@ eval $(thefuck --alias)
 
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
     alias nvim=nvr -cc split --remote-wait +'set bufhidden=wipe'
-fi
-
-if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
     export VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
     export EDITOR="nvr -cc split --remote-wait +'set bufhidden=wipe'"
 else
     export VISUAL="nvim"
     export EDITOR="nvim"
 fi
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
