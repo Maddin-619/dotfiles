@@ -123,7 +123,7 @@ keys = [
     Key([mod], "Tab", lazy.next_layout()),  # Toggle through layouts
     Key([mod, "shift"], "c", lazy.window.kill()),  # Kill active window
     Key([mod, "shift"], "r", lazy.restart()),  # Restart Qtile
-    Key([mod, "shift"], "r", lazy.restart()),  # Restart Qtile
+    Key([mod, "shift"], "q", lazy.function(show_power_menu)),  # Shutdown Qtile
     Key([mod], "z", lazy.spawn("xscreensaver-command -lock")),  # Lock Session
     # Switch focus to specific monitor (out of three)
     Key(
