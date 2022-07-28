@@ -33,17 +33,16 @@ Plug 'hrsh7th/cmp-vsnip'
 
 Plug 'tami5/lspsaga.nvim'
 
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+
 Plug 'nvim-lua/plenary.nvim'
-Plug 'williamboman/nvim-lsp-installer'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'tamago324/nlsp-settings.nvim'
 
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'theHamsta/nvim-dap-virtual-text'
-" Not ready
-" Plug 'Pocco81/dap-buddy.nvim'
-Plug 'ravenxrz/DAPInstall.nvim'
 
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
