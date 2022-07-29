@@ -246,8 +246,8 @@ group_names = [
     ("4", {"layout": "monadtall"}),
     ("5", {"layout": "monadtall"}),
     ("6", {"layout": "monadtall"}),
+    ("7", {"layout": "monadtall"}),
     ("8", {"layout": "monadtall"}),
-    ("9", {"layout": "monadtall"}),
     ("9", {"layout": "floating"}),
 ]
 
