@@ -104,6 +104,21 @@ dap.configurations.go = {
     showLog = false;
     program = "${file}";
   },
+  {
+    type = 'go';
+    name = 'Attach';
+    request = 'attach';
+    mode = 'remote';
+    debugAdapter = 'dlv-dap';
+    remotePath = '';
+    port = 2345;
+    host = function()
+      return vim.fn.input('Remote host: ', 'localhost')
+    end,
+    showLog = true;
+    trace = 'log';
+    logOutput = 'rpc';
+  }
 }
 
 dap.configurations.cpp = {
