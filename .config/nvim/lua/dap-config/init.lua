@@ -88,6 +88,8 @@ dap.adapters.go = {
   }
 }
 
+-- Start on remote: dlv --listen=:2345 --headless=true --log=true --api-version=2 exec ./main
+
 dap.adapters.cppdbg = {
   id = 'cppdbg',
   type = 'executable',
@@ -113,7 +115,6 @@ dap.configurations.cpp = {
       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
     end,
     cwd = '${workspaceFolder}',
-    stopOnEntry = true,
     MIMode = 'gdb',
     setupCommands = {
       {
@@ -124,16 +125,25 @@ dap.configurations.cpp = {
     },
   },
   {
-    name = 'Attach to gdbserver :1234',
+    name = 'Attach to gdbserver',
     type = 'cppdbg',
     request = 'launch',
-    MIMode = 'gdb',
-    miDebuggerServerAddress = 'localhost:1234',
-    miDebuggerPath = '/usr/bin/gdb',
-    cwd = '${workspaceFolder}',
     program = function()
       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
     end,
+    miDebuggerServerAddress = function()
+      return vim.fn.input('Remote url: ', 'localhost:1234')
+    end,
+    cwd = '${workspaceFolder}',
+    miDebuggerPath = '/usr/bin/gdb',
+    MIMode = 'gdb',
+    setupCommands = {
+      {
+        text = '-enable-pretty-printing',
+        description = 'enable pretty printing',
+        ignoreFailures = false
+      },
+    },
   },
 }
 
