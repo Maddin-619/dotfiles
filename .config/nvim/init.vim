@@ -103,6 +103,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'jamessan/vim-gnupg'
 " Plug 'airblade/vim-rooter'
 
 " Initialize plugin system
@@ -445,7 +446,7 @@ noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 map <leader>q :e ~/buffer<cr>
 
 " Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
+map <leader>x :e ~/buffer.gpg<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>

@@ -175,3 +175,6 @@ else
     export VISUAL="nvim"
     export EDITOR="nvim"
 fi
+
+GPG_TTY=`tty`
+export GPG_TTY
