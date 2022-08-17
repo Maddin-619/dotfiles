@@ -80,7 +80,7 @@ Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive' " A Git wrapper so awesome, it should be illegal
 Plug 'mattn/gist-vim' " Easily create gists from Vim using the :Gist command
-Plug 'tpope/vim-surround'
+Plug 'kylechui/nvim-surround'
 Plug 'alvan/vim-closetag'
 Plug 'windwp/nvim-autopairs'
 
