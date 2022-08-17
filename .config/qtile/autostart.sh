@@ -3,7 +3,7 @@ autorandr -c &
 nitrogen --restore &
 picom -CGb &
 nm-applet &
-blueman-tray &
+blueman-applet &
 optimus-manager-qt &
 powerkit &
 indicator-sound-switcher &
