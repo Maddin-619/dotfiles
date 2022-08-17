@@ -7,25 +7,28 @@ local lspconfig = require("lspconfig")
 
 local servers = { "jsonls", "sumneko_lua" }
 
+local function setup(server_name)
+  local opts = {
+    on_attach = require("lsp.handlers").on_attach,
+    capabilities = require("lsp.handlers").capabilities,
+  }
+  local has_custom_opts, server_custom_opts = pcall(require, "lsp.settings." .. server_name)
+  if has_custom_opts then
+    opts = vim.tbl_deep_extend("force", opts, server_custom_opts)
+  end
+  lspconfig[server_name].setup(opts)
+end
+
 mason_lspconfig.setup({
   ensure_installed = servers,
 })
 
-lspconfig.ccls.setup {}
+-- Manually setup ccls because it is not managed by mason
+setup("ccls")
 
 mason_lspconfig.setup_handlers({
   -- The first entry (without a key) will be the default handler
   -- and will be called for each installed server that doesn't have
   -- a dedicated handler.
-  function(server_name) -- default handler (optional)
-    local opts = {
-      on_attach = require("lsp.handlers").on_attach,
-      capabilities = require("lsp.handlers").capabilities,
-    }
-    local has_custom_opts, server_custom_opts = pcall(require, "lsp.settings." .. server_name)
-    if has_custom_opts then
-      opts = vim.tbl_deep_extend("force", opts, server_custom_opts)
-    end
-    lspconfig[server_name].setup(opts)
-  end,
+  setup,
 })
