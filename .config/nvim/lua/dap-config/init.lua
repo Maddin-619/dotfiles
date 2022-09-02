@@ -121,46 +121,47 @@ dap.configurations.go = {
   }
 }
 
-dap.configurations.cpp = {
-  {
-    name = "Launch file vscode-cpptools",
-    type = "cppdbg",
-    request = "launch",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    cwd = '${workspaceFolder}',
-    MIMode = 'gdb',
-    setupCommands = {
-      {
-        text = '-enable-pretty-printing',
-        description = 'enable pretty printing',
-        ignoreFailures = false
-      },
-    },
-  },
-  {
-    name = 'Attach to gdbserver',
-    type = 'cppdbg',
-    request = 'launch',
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    miDebuggerServerAddress = function()
-      return vim.fn.input('Remote url: ', 'localhost:1234')
-    end,
-    cwd = '${workspaceFolder}',
-    miDebuggerPath = '/usr/bin/gdb',
-    MIMode = 'gdb',
-    setupCommands = {
-      {
-        text = '-enable-pretty-printing',
-        description = 'enable pretty printing',
-        ignoreFailures = false
-      },
-    },
-  },
-}
-
-dap.configurations.c = dap.configurations.cpp
-dap.configurations.rust = dap.configurations.cpp
+--[[ dap.configurations.cpp = { ]]
+--[[   { ]]
+--[[     name = "Launch file vscode-cpptools", ]]
+--[[     type = "cppdbg", ]]
+--[[     request = "launch", ]]
+--[[     program = function() ]]
+--[[       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file') ]]
+--[[     end, ]]
+--[[     cwd = '${workspaceFolder}', ]]
+--[[     MIMode = 'gdb', ]]
+--[[     setupCommands = { ]]
+--[[       { ]]
+--[[         text = '-enable-pretty-printing', ]]
+--[[         description = 'enable pretty printing', ]]
+--[[         ignoreFailures = false ]]
+--[[       }, ]]
+--[[     }, ]]
+--[[   }, ]]
+--[[   { ]]
+--[[     name = 'Attach to gdbserver', ]]
+--[[     type = 'cppdbg', ]]
+--[[     request = 'launch', ]]
+--[[     program = function() ]]
+--[[       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file') ]]
+--[[     end, ]]
+--[[     miDebuggerServerAddress = function() ]]
+--[[       return vim.fn.input('Remote url: ', 'localhost:1234') ]]
+--[[     end, ]]
+--[[     cwd = '${workspaceFolder}', ]]
+--[[     miDebuggerPath = '/usr/bin/gdb-multiarch', ]]
+--[[     MIMode = 'gdb', ]]
+--[[     setupCommands = { ]]
+--[[       { ]]
+--[[         text = '-enable-pretty-printing', ]]
+--[[         description = 'enable pretty printing', ]]
+--[[         ignoreFailures = false ]]
+--[[       }, ]]
+--[[     }, ]]
+--[[   }, ]]
+--[[ } ]]
+--[[]]
+--[[ dap.configurations.c = dap.configurations.cpp ]]
+--[[ dap.configurations.rust = dap.configurations.cpp ]]
+require('dap.ext.vscode').load_launchjs(nil, { cppdbg = { 'c', 'cpp', 'rust' } })
