@@ -19,17 +19,32 @@ endif
 
 Plug 'neovim/nvim-lspconfig'
 
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/cmp-calc'
-Plug 'ray-x/cmp-treesitter'
-Plug 'hrsh7th/cmp-emoji'
-Plug 'hrsh7th/nvim-cmp'
+" main one
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+" 9000+ Snippets
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 
-" For vsnip users.
-Plug 'hrsh7th/cmp-vsnip'
+" lua & third party sources -- See https://github.com/ms-jpq/coq.thirdparty
+" Need to **configure separately**
+
+Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
+" - shell repl
+" - nvim lua api
+" - scientific calculator
+" - comment banner
+" - etc
+
+" Plug 'hrsh7th/cmp-nvim-lsp'
+" Plug 'hrsh7th/cmp-buffer'
+" Plug 'hrsh7th/cmp-path'
+" Plug 'hrsh7th/cmp-cmdline'
+" Plug 'hrsh7th/cmp-calc'
+" Plug 'ray-x/cmp-treesitter'
+" Plug 'hrsh7th/cmp-emoji'
+" Plug 'hrsh7th/nvim-cmp'
+"
+" " For vsnip users.
+" Plug 'hrsh7th/cmp-vsnip'
 
 Plug 'tami5/lspsaga.nvim'
 
@@ -618,6 +633,7 @@ map <leader>c :cclose<cr>
 
 " Make sure that enter is never overriden in the quickfix window
 autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
+autocmd! FileType qf nnoremap <buffer> <leader><Enter> <C-w><Enter><C-w>L
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -995,6 +1011,8 @@ augroup end
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <silent><leader>ca <cmd>lua require('lspsaga.codeaction').code_action()<CR>
 vnoremap <silent><leader>ca :<C-U>lua require('lspsaga.codeaction').range_code_action()<CR>
+
+let g:coq_settings = { 'auto_start': 'shut-up' }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Init Lua Configs

@@ -33,6 +33,9 @@ local kind_icons = {
 }
 
 cmp.setup({
+  performance = {
+    trigger_debounce_time = 500
+  },
   snippet = {
     -- REQUIRED - you must specify a snippet engine
     expand = function(args)
