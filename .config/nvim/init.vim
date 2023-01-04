@@ -90,7 +90,6 @@ Plug 'stevearc/vim-vsnip-snippets'
 
 Plug 'numToStr/Comment.nvim'
 Plug 'JoosepAlviste/nvim-ts-context-commentstring'
-Plug 'michaeljsmith/vim-indent-object' " Defines a new text object representing lines of code at the same indent level. Useful for python/vim scripts
 Plug 'terryma/vim-expand-region' " Allows you to visually select increasingly larger regions of text using the same key combination
 Plug 'terryma/vim-multiple-cursors' " Sublime Text style multiple selections for Vim, CTRL+N is remapped to CTRL+S (due to YankRing)
 Plug 'airblade/vim-gitgutter'
@@ -106,7 +105,6 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'mhartington/oceanic-next'
 Plug 'rakr/vim-one'
-Plug 'ap/vim-css-color'
 Plug 'alampros/vim-styled-jsx'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
 
@@ -993,7 +991,7 @@ set updatetime=300
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Presenting.Vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:markdown_fenced_languages = ["vim", "json", "bash", "python", "html", "javascript", "typescript"]
+" let g:markdown_fenced_languages = ["vim", "json", "bash", "python", "html", "javascript", "typescript"]
 let g:presenting_figlets = 1
 let g:presenting_top_margin = 2
 let b:presenting_slide_separator = '\v(^|\n)\ze#{2} '
