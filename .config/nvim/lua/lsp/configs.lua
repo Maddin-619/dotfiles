@@ -4,7 +4,7 @@ if not status_ok then
 end
 
 local lspconfig = require("lspconfig")
-local coq = require("coq")
+--[[ local coq = require("coq") ]]
 
 local servers = { "jsonls", "sumneko_lua" }
 
@@ -17,7 +17,8 @@ local function setup(server_name)
   if has_custom_opts then
     opts = vim.tbl_deep_extend("force", opts, server_custom_opts)
   end
-  lspconfig[server_name].setup(coq.lsp_ensure_capabilities(opts))
+  --[[ lspconfig[server_name].setup(coq.lsp_ensure_capabilities(opts)) ]]
+  lspconfig[server_name].setup(opts)
 end
 
 mason_lspconfig.setup({

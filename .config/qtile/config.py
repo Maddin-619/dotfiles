@@ -195,15 +195,15 @@ keys = [
     Key([mod, "shift"], "f", lazy.window.toggle_floating()),  # Toggle floating
     # Stack controls
     Key(
-        [mod, "shift"],
-        "space",
+        [mod],
+        "down",
         lazy.layout.rotate(),  # Swap panes of split stack (Stack)
         # Switch which side main pane occupies (XmonadTall)
         lazy.layout.flip(),
     ),
     Key(
         [mod],
-        "space",
+        "up",
         # Switch window focus to other pane(s) of stack
         lazy.layout.next(),
     ),

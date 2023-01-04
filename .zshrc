@@ -165,6 +165,8 @@ source /usr/share/fzf/key-bindings.zsh
 
 export PATH=${PATH}:`go env GOPATH`/bin
 
+export PATH=${PATH}:$HOME/.cargo/bin
+
 eval $(thefuck --alias)
 
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then

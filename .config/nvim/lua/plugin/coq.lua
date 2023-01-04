@@ -1,3 +1,12 @@
+vim.g.coq_settings = {
+  auto_start = "shut-up",
+  clients = {
+    tree_sitter = {
+      enabled = false
+    }
+  }
+}
+
 local status_ok, coq = pcall(require, "coq")
 if not status_ok then
   return

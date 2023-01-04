@@ -88,6 +88,12 @@ dap.adapters.go = {
   }
 }
 
+dap.adapters.delve = {
+  type = "server",
+  host = "127.0.0.1",
+  port = 2345,
+}
+
 -- Start on remote: dlv --listen=:2345 --headless=true --log=true --api-version=2 exec ./main
 
 dap.adapters.cppdbg = {
@@ -164,4 +170,4 @@ dap.configurations.go = {
 --[[]]
 --[[ dap.configurations.c = dap.configurations.cpp ]]
 --[[ dap.configurations.rust = dap.configurations.cpp ]]
-require('dap.ext.vscode').load_launchjs(nil, { cppdbg = { 'c', 'cpp', 'rust' } })
+require('dap.ext.vscode').load_launchjs(nil, { cppdbg = { 'c', 'cpp', 'rust' }, delve = { 'go' } })

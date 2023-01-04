@@ -1,4 +1,3 @@
-vim.o.completeopt = "menu,menuone,noselect"
 local cmp_status_ok, cmp = pcall(require, "cmp")
 if not cmp_status_ok then
   return
@@ -34,7 +33,15 @@ local kind_icons = {
 
 cmp.setup({
   performance = {
-    trigger_debounce_time = 500
+    trigger_debounce_time = 300
+  },
+  completion = {
+    autocomplete = {
+      cmp.TriggerEvent.TextChanged,
+      cmp.TriggerEvent.InsertEnter,
+    },
+    completeopt = "menuone,noinsert,noselect",
+    keyword_length = 0,
   },
   snippet = {
     -- REQUIRED - you must specify a snippet engine
@@ -76,6 +83,7 @@ cmp.setup({
     { name = 'emoji' },
     { name = 'spell' },
     { name = 'path' },
+    { name = 'nvim_lsp_signature_help' },
   }),
   formatting = {
     fields = { "kind", "abbr", "menu" },

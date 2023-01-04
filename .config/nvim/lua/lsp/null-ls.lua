@@ -24,6 +24,8 @@ null_ls.setup({
     formatting.black.with({ extra_args = { "--fast" } }),
     diagnostics.eslint_d,
     diagnostics.eslint_d.with({ command = "eslint_d" .. command_ext }),
+    diagnostics.revive.with({ args = { "-formatter", "json", "-config", vim.fn.getcwd() .. "/revive.toml", "./..." } }),
+
     -- diagnostics.flake8
   },
   on_attach = function(client)
