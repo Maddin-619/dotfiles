@@ -16,10 +16,11 @@ from typing import List  # noqa: F401
 ##### DEFINING SOME VARIABLES #####
 mod = "mod4"  # Sets mod key to SUPER/WINDOWS
 myTerm = "alacritty"  # My terminal of choice
-# The Qtile config file location
-myConfig = "/home/martin/.config/qtile/config.py"
 
 backlightNames = ["intel_backlight", "edp-backlight"]
+
+# the default weather location
+public_ip = "Heumaden"
 
 #### HELPER FUNCTIONS ####
 
@@ -37,7 +38,8 @@ def get_num_monitors():
         resources = screen.root.xrandr_get_screen_resources()
 
         for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
+            monitor = display.xrandr_get_output_info(
+                output, resources.config_timestamp)
             preferred = False
             if hasattr(monitor, "preferred"):
                 preferred = monitor.preferred
@@ -117,7 +119,7 @@ keys = [
         [mod, "shift"],
         "Return",
         lazy.spawn(
-            "rofi -combi-modi window,drun,ssh -theme solarized_alternate -font 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
+            "rofi -combi-modes window,drun,ssh,run -theme solarized_alternate -font 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
         ),
     ),  # Run Launcher
     Key([mod], "Tab", lazy.next_layout()),  # Toggle through layouts
@@ -145,11 +147,14 @@ keys = [
         lazy.to_screen(2),
     ),
     # Switch focus of monitors
-    Key([mod], "period", lazy.next_screen()),  # Move monitor focus to next screen
-    Key([mod], "comma", lazy.prev_screen()),  # Move monitor focus to prev screen
+    # Move monitor focus to next screen
+    Key([mod], "period", lazy.next_screen()),
+    # Move monitor focus to prev screen
+    Key([mod], "comma", lazy.prev_screen()),
     # Treetab controls
     Key(
-        [mod, "control"], "k", lazy.layout.section_up()  # Move up a section in treetab
+        # Move up a section in treetab
+        [mod, "control"], "k", lazy.layout.section_up()
     ),
     Key(
         [mod, "control"],
@@ -157,8 +162,10 @@ keys = [
         lazy.layout.section_down(),  # Move down a section in treetab
     ),
     # Window controls
-    Key([mod], "k", lazy.layout.down()),  # Switch between windows in current stack pane
-    Key([mod], "j", lazy.layout.up()),  # Switch between windows in current stack pane
+    # Switch between windows in current stack pane
+    Key([mod], "k", lazy.layout.down()),
+    # Switch between windows in current stack pane
+    Key([mod], "j", lazy.layout.up()),
     Key(
         [mod, "shift"],
         "k",
@@ -214,7 +221,8 @@ keys = [
         lazy.layout.toggle_split(),
     ),
     # Dmenu scripts launched with ALT + CTRL + KEY
-    Key(["mod1", "control"], "e", lazy.spawn("./.dmenu/dmenu-edit-configs.sh")),
+    Key(["mod1", "control"], "e", lazy.spawn(
+        "./.dmenu/dmenu-edit-configs.sh")),
     # My applications launched with SUPER + ALT + KEY
     Key([mod], "s", lazy.spawn("pavucontrol-qt")),
     # Special Keybindings
@@ -232,7 +240,8 @@ keys = [
             'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%"'
         ),
     ),
-    Key([], "XF86AudioMute", lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
+    Key([], "XF86AudioMute", lazy.spawn(
+        "pactl set-sink-mute @DEFAULT_SINK@ toggle")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10")),
 ]
@@ -292,11 +301,6 @@ widget_defaults = dict(
     padding=2,
 )
 extension_defaults = widget_defaults.copy()
-
-try:
-    public_ip = requests.get("https://ifconfig.me").text
-except:
-    public_ip = "Heumaden"
 
 ##### WIDGETS #####
 
@@ -457,10 +461,20 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 
 ##### STARTUP APPLICATIONS #####
+
+
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser("~")
     subprocess.call([home + "/.config/qtile/autostart.sh"])
+
+
+@hook.subscribe.startup
+def startup():
+    try:
+        public_ip = requests.get("https://ifconfig.me", timeout=3).text
+    except:
+        public_ip = "Heumaden"
 
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
