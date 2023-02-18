@@ -5,8 +5,7 @@ end
 
 local lspconfig = require("lspconfig")
 --[[ local coq = require("coq") ]]
-
-local servers = { "jsonls", "sumneko_lua" }
+local servers = { "jsonls", "lua_ls" }
 
 local function setup(server_name)
   local opts = {
