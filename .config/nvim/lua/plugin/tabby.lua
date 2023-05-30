@@ -36,7 +36,7 @@ local function win_label(winid, top)
   local icon = top and '' or ''
   local fname = require("tabby.filename").tail(winid)
   local extension = vim.fn.fnamemodify(fname, ':e')
-  local fileIcon = require'nvim-web-devicons'.get_icon(filename, extension)
+  local fileIcon = require 'nvim-web-devicons'.get_icon(fname, extension)
   local buid = vim.api.nvim_win_get_buf(winid)
   local is_modified = vim.api.nvim_buf_get_option(buid, 'modified')
   local modifiedIcon = is_modified and '' or ''
@@ -97,7 +97,7 @@ local tabline = {
     layout = 'active_wins_at_end',
     head = {
       { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg } },
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { '',   hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     active_tab = {
       label = function(tabid)
@@ -145,7 +145,7 @@ local tabline = {
     layout = 'active_tab_with_wins',
     head = {
       { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg, style = 'italic' } },
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { '',   hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     active_tab = {
       label = function(tabid)
@@ -193,7 +193,7 @@ local tabline = {
     layout = 'tab_with_top_win',
     head = {
       { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg, style = 'italic' } },
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { '',   hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     active_tab = {
       label = function(tabid)
@@ -241,7 +241,7 @@ local tabline = {
     layout = 'tab_only',
     head = {
       { '  ', hl = { fg = hl_tabline.fg, bg = hl_tabline.bg } },
-      { '', hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
+      { '',   hl = { fg = hl_tabline.bg, bg = hl_tabline_fill.bg } },
     },
     active_tab = {
       label = function(tabid)
@@ -269,4 +269,3 @@ local tabline = {
 tabby.setup {
   tabline = tabline.active_wins_at_tail,
 }
-

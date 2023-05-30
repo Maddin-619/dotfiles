@@ -118,6 +118,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'jamessan/vim-gnupg'
+Plug 'RaafatTurki/hex.nvim'
 " Plug 'airblade/vim-rooter'
 
 " Initialize plugin system

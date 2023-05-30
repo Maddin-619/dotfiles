@@ -3,6 +3,45 @@ if not status_ok then
   return
 end
 
+local repl = require 'dap.repl'
+repl.commands = vim.tbl_extend('force', repl.commands, {
+  -- Add a new alias for the existing .exit command
+  exit = { 'exit', '.exit', '.bye' },
+  -- Add your own commands; run `.echo hello world` to invoke
+  -- this function with the text "hello world"
+  custom_commands = {
+    ['.read'] = function(text)
+      dap.repl.append(text)
+      local args = {}
+      for w in string.gmatch(text, "([^%s]+)") do
+        table.insert(args, w)
+      end
+      local session = dap.session()
+      session:request('readMemory', { memoryReference = args[1], count = tonumber(args[2]) }, function(err, response)
+        if not response then
+          return
+        end
+        dap.repl.append(response.data)
+      end)
+    end,
+    ['.var'] = function(text)
+      dap.repl.append(text)
+      local args = {}
+      for w in string.gmatch(text, "([^%s]+)") do
+        table.insert(args, w)
+      end
+      local session = dap.session()
+      session:request('variables', { variablesReference = tonumber(args[1]), count = tonumber(args[2]) },
+        function(err, response)
+          if not response then
+            return
+          end
+          dap.repl.append(response.data)
+        end)
+    end,
+  },
+})
+
 local remap = vim.api.nvim_set_keymap
 remap("n", "<F5>", ":lua require'dap'.continue()<CR>", { noremap = false, silent = false })
 remap("n", "<F9>", ":lua require'dap'.toggle_breakpoint()<CR>", { noremap = false, silent = false })
@@ -54,8 +93,8 @@ dapui.setup({
     },
   },
   floating = {
-    max_height = nil, -- These can be integers or a float between 0 and 1.
-    max_width = nil, -- Floats will be treated as percentage of your screen.
+    max_height = nil,   -- These can be integers or a float between 0 and 1.
+    max_width = nil,    -- Floats will be treated as percentage of your screen.
     border = "rounded", -- Border style. Can be "single", "double" or "rounded"
     mappings = {
       close = { "q", "<Esc>" },
@@ -79,19 +118,13 @@ end
 
 local path = require "mason-core.path"
 
-dap.adapters.go = {
+dap.adapters.delve = {
   type = 'server',
   port = '${port}',
   executable = {
-    command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "dlv" };
+    command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "dlv" },
     args = { 'dap', '-l', '127.0.0.1:${port}' },
   }
-}
-
-dap.adapters.delve = {
-  type = "server",
-  host = "127.0.0.1",
-  port = 2345,
 }
 
 -- Start on remote: dlv --listen=:2345 --headless=true --log=true --api-version=2 exec ./main
@@ -99,31 +132,46 @@ dap.adapters.delve = {
 dap.adapters.cppdbg = {
   id = 'cppdbg',
   type = 'executable',
-  command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "OpenDebugAD7" };
+  command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "OpenDebugAD7" },
 }
 
 dap.configurations.go = {
   {
-    type = 'go';
-    name = 'Debug';
-    request = 'launch';
-    showLog = false;
-    program = "${file}";
+    type = 'delve',
+    name = 'Debug',
+    request = 'launch',
+    showLog = false,
+    program = '${file}',
   },
   {
-    type = 'go';
-    name = 'Attach';
-    request = 'attach';
-    mode = 'remote';
-    debugAdapter = 'dlv-dap';
-    remotePath = '';
-    port = 2345;
+    type = 'delve',
+    name = 'Debug test', -- configuration for debugging test files
+    request = 'launch',
+    mode = 'test',
+    program = '${file}'
+  },
+  -- works with go.mod packages and sub packages
+  {
+    type = "delve",
+    name = "Debug test (go.mod)",
+    request = "launch",
+    mode = "test",
+    program = "./${relativeFileDirname}"
+  },
+  {
+    type = 'delve',
+    name = 'Attach',
+    request = 'attach',
+    mode = 'remote',
+    debugAdapter = 'dlv-dap',
+    remotePath = '',
+    port = 2345,
     host = function()
       return vim.fn.input('Remote host: ', 'localhost')
     end,
-    showLog = true;
-    trace = 'log';
-    logOutput = 'rpc';
+    showLog = true,
+    trace = 'log',
+    logOutput = 'rpc',
   }
 }
 
