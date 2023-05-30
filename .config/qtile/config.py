@@ -1,19 +1,16 @@
 import os
 import subprocess
-import requests
 from Xlib import display as xdisplay
 from libqtile import qtile
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
-from libqtile import layout, bar, widget, hook, extension
+from libqtile import layout, bar, widget, hook
 
 from qtile_extras.popup.toolkit import PopupRelativeLayout, PopupImage, PopupText
 from qtile_extras.widget.upower import UPowerWidget
 
-from typing import List  # noqa: F401
-
-##### DEFINING SOME VARIABLES #####
+# DEFINING SOME VARIABLES #
 mod = "mod4"  # Sets mod key to SUPER/WINDOWS
 myTerm = "alacritty"  # My terminal of choice
 
@@ -22,7 +19,7 @@ backlightNames = ["intel_backlight", "edp-backlight"]
 # the default weather location
 public_ip = "Heumaden"
 
-#### HELPER FUNCTIONS ####
+# HELPER FUNCTIONS #
 
 backlightName = ""
 for name in backlightNames:
@@ -38,8 +35,7 @@ def get_num_monitors():
         resources = screen.root.xrandr_get_screen_resources()
 
         for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(
-                output, resources.config_timestamp)
+            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
             preferred = False
             if hasattr(monitor, "preferred"):
                 preferred = monitor.preferred
@@ -55,7 +51,6 @@ def get_num_monitors():
 
 
 def show_power_menu(qtile):
-
     controls = [
         PopupImage(
             filename="~/.config/qtile/icons/logout.svg",
@@ -111,7 +106,7 @@ def show_power_menu(qtile):
     layout.show(centered=True)
 
 
-##### KEYBINDINGS #####
+# KEYBINDINGS #
 keys = [
     # The essentials
     Key([mod], "Return", lazy.spawn(myTerm)),  # Open terminal
@@ -119,7 +114,8 @@ keys = [
         [mod, "shift"],
         "Return",
         lazy.spawn(
-            "rofi -combi-modes window,drun,ssh,run -theme solarized_alternate -font 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
+            "rofi -combi-modes window,drun,ssh,run -theme solarized_alternate -font"
+            " 'hack 12' -show combi -icon-theme 'Papirus' -show-icons"
         ),
     ),  # Run Launcher
     Key([mod], "Tab", lazy.next_layout()),  # Toggle through layouts
@@ -154,7 +150,9 @@ keys = [
     # Treetab controls
     Key(
         # Move up a section in treetab
-        [mod, "control"], "k", lazy.layout.section_up()
+        [mod, "control"],
+        "k",
+        lazy.layout.section_up(),
     ),
     Key(
         [mod, "control"],
@@ -221,8 +219,7 @@ keys = [
         lazy.layout.toggle_split(),
     ),
     # Dmenu scripts launched with ALT + CTRL + KEY
-    Key(["mod1", "control"], "e", lazy.spawn(
-        "./.dmenu/dmenu-edit-configs.sh")),
+    Key(["mod1", "control"], "e", lazy.spawn("./.dmenu/dmenu-edit-configs.sh")),
     # My applications launched with SUPER + ALT + KEY
     Key([mod], "s", lazy.spawn("pavucontrol-qt")),
     # Special Keybindings
@@ -230,24 +227,25 @@ keys = [
         [],
         "XF86AudioRaiseVolume",
         lazy.spawn(
-            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ +5%"'
+            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume'
+            ' @DEFAULT_SINK@ +5%"'
         ),
     ),
     Key(
         [],
         "XF86AudioLowerVolume",
         lazy.spawn(
-            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume @DEFAULT_SINK@ -5%"'
+            'sh -c "pactl set-sink-mute @DEFAULT_SINK@ false ; pactl set-sink-volume'
+            ' @DEFAULT_SINK@ -5%"'
         ),
     ),
-    Key([], "XF86AudioMute", lazy.spawn(
-        "pactl set-sink-mute @DEFAULT_SINK@ toggle")),
+    Key([], "XF86AudioMute", lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10")),
 ]
 
 
-##### GROUPS #####
+# GROUPS #
 group_names = [
     ("1", {"layout": "monadtall"}),
     ("2", {"layout": "monadtall"}),
@@ -269,7 +267,7 @@ for i, (name, kwargs) in enumerate(group_names, 1):
     keys.append(Key([mod, "shift"], str(i), lazy.window.togroup(name)))
 
 
-##### DEFAULT THEME SETTINGS FOR LAYOUTS #####
+# DEFAULT THEME SETTINGS FOR LAYOUTS #
 layout_theme = {
     "border_width": 2,
     "margin": 4,
@@ -277,7 +275,7 @@ layout_theme = {
     "border_normal": "#1D2330",
 }
 
-##### THE LAYOUTS #####
+# THE LAYOUTS #
 layouts = [
     layout.Max(),
     layout.Stack(num_stacks=2, **layout_theme),
@@ -294,7 +292,7 @@ layouts = [
     layout.Floating(**layout_theme),
 ]
 
-##### DEFAULT WIDGET SETTINGS #####
+# DEFAULT WIDGET SETTINGS #
 widget_defaults = dict(
     font="Hack Nerd Font",
     fontsize=14,
@@ -302,7 +300,7 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-##### WIDGETS #####
+# WIDGETS #
 
 
 def init_widgets_list():
@@ -374,7 +372,7 @@ def init_widgets_list():
         ),
         widget.Sep(**sep_props),
         widget.Clock(
-            format="%a, %b %d - %H:%M",
+            format="%a, %b %d - %H:%M:%S",
             padding=2,
         ),
         widget.Sep(**sep_props),
@@ -428,7 +426,7 @@ if __name__ in ["config", "__main__"]:
     logger.info("number of screens: {0}".format(num_monitors))
     screens = init_screens(num_monitors)
 
-##### DRAG FLOATING WINDOWS #####
+# DRAG FLOATING WINDOWS #
 
 mouse = [
     Drag(
@@ -460,7 +458,7 @@ floating_layout = layout.Floating(
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 
-##### STARTUP APPLICATIONS #####
+# STARTUP APPLICATIONS #
 
 
 @hook.subscribe.startup_once
@@ -469,15 +467,6 @@ def start_once():
     subprocess.call([home + "/.config/qtile/autostart.sh"])
 
 
-@hook.subscribe.startup
-def startup():
-    try:
-        public_ip = requests.get("https://ifconfig.me", timeout=3).text
-    except:
-        public_ip = "Heumaden"
-
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
 # mailing lists, GitHub issues, and other WM documentation that suggest setting
 # this string if your java app doesn't work correctly. We may as well just lie
