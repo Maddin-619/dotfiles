@@ -142,7 +142,7 @@ alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias grep='grep --colour=auto'
 alias ls='ls --color=auto'
-alias la='exa -la'
+alias la='erd --level 1 --hidden --no-ignore --long --group -H'
 alias aur="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
 alias stfu="sudo shutdown now"
 
