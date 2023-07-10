@@ -167,6 +167,10 @@ export PATH=${PATH}:`go env GOPATH`/bin
 
 export PATH=${PATH}:$HOME/.cargo/bin
 
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:/bin/java::")
+
+export PATH=${PATH}:$$JAVA_HOME/bin
+
 eval $(thefuck --alias)
 
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
