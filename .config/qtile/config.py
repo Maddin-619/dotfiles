@@ -16,9 +16,6 @@ myTerm = "alacritty"  # My terminal of choice
 
 backlightNames = ["intel_backlight", "edp-backlight"]
 
-# the default weather location
-public_ip = "Heumaden"
-
 # HELPER FUNCTIONS #
 
 backlightName = ""
@@ -360,13 +357,10 @@ def init_widgets_list():
         widget.Sep(**sep_props),
         widget.Wttr(
             format=1,
-            location={
-                public_ip: public_ip,
-                "Stuttgart": "Stuttgart",
-            },
+            location= {"Home": "70619"},
             mouse_callbacks={
-                "Button1": lambda: qtile.cmd_spawn(
-                    myTerm + " --hold -e wttr " + public_ip
+                "Button1": lambda: qtile.spawn(
+                    myTerm + " --hold -e wttr 70619"
                 )
             },
         ),
