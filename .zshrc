@@ -142,7 +142,8 @@ alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias grep='grep --colour=auto'
 alias ls='ls --color=auto'
-alias la='erd --level 1 --hidden --no-ignore --long --group -H'
+alias la='erd --level 1 -I --hidden --no-ignore --long --group -H --suppress-size'
+alias laa='erd --level 1 -I --hidden --no-ignore --long --group -H --sort name'
 alias aur="paru -Slq | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
 alias stfu="sudo shutdown now"
 
@@ -173,7 +174,7 @@ export PATH=${PATH}:$$JAVA_HOME/bin
 
 eval $(thefuck --alias)
 
-if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+if [ -n "$NVIM" ]; then
     alias nvim=nvr -cc split --remote-wait +'set bufhidden=wipe'
     export VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
     export EDITOR="nvr -cc split --remote-wait +'set bufhidden=wipe'"

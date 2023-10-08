@@ -7,4 +7,4 @@ blueman-applet &
 optimus-manager-qt &
 powerkit &
 indicator-sound-switcher &
-clight &
+clight-gui --tray &
