@@ -3,6 +3,8 @@ if not status_ok then
   return
 end
 
+dap.defaults.fallback.auto_continue_if_many_stopped = false
+
 local repl = require 'dap.repl'
 repl.commands = vim.tbl_extend('force', repl.commands, {
   -- Add a new alias for the existing .exit command
@@ -118,14 +120,28 @@ end
 
 local path = require "mason-core.path"
 
-dap.adapters.delve = {
-  type = 'server',
-  port = '${port}',
-  executable = {
-    command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "dlv" },
-    args = { 'dap', '-l', '127.0.0.1:${port}' },
-  }
-}
+dap.adapters.delve = function(cb, config)
+  if config.request == 'attach' and config.mode == 'remote' then
+    ---@diagnostic disable-next-line: undefined-field
+    local port = (config.connect or config).port
+    ---@diagnostic disable-next-line: undefined-field
+    local host = (config.connect or config).host
+    cb({
+      type = 'server',
+      port = assert(port, '`connect.port` is required for a dlv `remote attach` configuration'),
+      host = assert(host, '`connect.host` is required for a dlv `remote attach` configuration'),
+    })
+  else
+    cb({
+      type = 'server',
+      port = '${port}',
+      executable = {
+        command = path.concat { vim.fn.stdpath("data"), "mason", "bin", "dlv" },
+        args = { 'dap', '-l', '127.0.0.1:${port}' },
+      },
+    })
+  end
+end
 
 -- Start on remote: dlv --listen=:2345 --headless=true --log=true --api-version=2 exec ./main
 
@@ -138,7 +154,7 @@ dap.adapters.cppdbg = {
 dap.configurations.go = {
   {
     type = 'delve',
-    name = 'Debug',
+    name = 'Execute',
     request = 'launch',
     showLog = false,
     program = '${file}',
@@ -160,15 +176,15 @@ dap.configurations.go = {
   },
   {
     type = 'delve',
-    name = 'Attach',
+    name = 'Remote',
     request = 'attach',
     mode = 'remote',
-    debugAdapter = 'dlv-dap',
-    remotePath = '',
-    port = 2345,
-    host = function()
-      return vim.fn.input('Remote host: ', 'localhost')
-    end,
+    connect = {
+      port = 2345,
+      host = function()
+        return vim.fn.input('Remote host: ', 'localhost')
+      end,
+    },
     showLog = true,
     trace = 'log',
     logOutput = 'rpc',
