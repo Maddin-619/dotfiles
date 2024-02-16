@@ -290,10 +290,30 @@ require("lazy").setup({
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
     },
+    opts = {
+      defaults = {
+        vimgrep_arguments = {
+          "rg",
+          "--color=never",
+          "--no-heading",
+          "--with-filename",
+          "--line-number",
+          "--column",
+          "--smart-case",
+          "--trim" -- add this value
+        }
+      },
+      pickers = {
+        find_files = {
+          -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+          find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+        },
+      },
+    },
     config = function()
       require('telescope').load_extension('fzf')
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>j', '<cmd>Telescope find_files hidden=true<cr>', {})
+      vim.keymap.set('n', '<leader>j', builtin.find_files, {})
       vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
       vim.keymap.set('n', '<leader>r', builtin.grep_string, {})
       vim.keymap.set('n', '<M-o>', builtin.buffers, {})
@@ -606,6 +626,7 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set spelloptions=camel
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell! spelllang=en_us,de_de<cr>
 
