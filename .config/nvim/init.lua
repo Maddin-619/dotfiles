@@ -286,6 +286,30 @@ require("lazy").setup({
   },
   {
     'nvim-telescope/telescope.nvim',
+    keys = {
+      -- add a keymap to browse plugin files
+      -- stylua: ignore
+      {
+        "<leader>j",
+        function() require("telescope.builtin").find_files() end,
+      },
+      {
+        "<leader>g",
+        function() require("telescope.builtin").live_grep() end,
+      },
+      {
+        "<leader>r",
+        function() require("telescope.builtin").grep_string() end,
+      },
+      {
+        "<M-o>",
+        function() require("telescope.builtin").buffers() end,
+      },
+      {
+        "<leader>f",
+        function() require("telescope.builtin").oldfiles() end,
+      },
+    },
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope-fzf-native.nvim',
@@ -300,7 +324,10 @@ require("lazy").setup({
           "--line-number",
           "--column",
           "--smart-case",
-          "--trim" -- add this value
+          "--trim", -- add this value
+          "--hidden",
+          "--glob",
+          "!**/.git/*"
         }
       },
       pickers = {
@@ -310,21 +337,17 @@ require("lazy").setup({
         },
       },
     },
-    config = function()
-      require('telescope').load_extension('fzf')
-      local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<leader>j', builtin.find_files, {})
-      vim.keymap.set('n', '<leader>g', builtin.live_grep, {})
-      vim.keymap.set('n', '<leader>r', builtin.grep_string, {})
-      vim.keymap.set('n', '<M-o>', builtin.buffers, {})
-      vim.keymap.set('n', '<leader>f', builtin.oldfiles, {})
-      vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-    end
   },
+  -- add telescope-fzf-native
   {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    build =
-    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+    "telescope.nvim",
+    dependencies = {
+      "nvim-telescope/telescope-fzf-native.nvim",
+      build = "make",
+      config = function()
+        require("telescope").load_extension("fzf")
+      end,
+    },
   },
   {
     "jamessan/vim-gnupg",
