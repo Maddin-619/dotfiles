@@ -257,11 +257,29 @@ group_names = [
 
 groups = [Group(name, **kwargs) for name, kwargs in group_names]
 
-for i, (name, kwargs) in enumerate(group_names, 1):
-    # Switch to another group
-    keys.append(Key([mod], str(i), lazy.group[name].toscreen()))
-    # Send current window to another group
-    keys.append(Key([mod, "shift"], str(i), lazy.window.togroup(name)))
+for i in groups:
+    keys.extend(
+        [
+            # mod1 + group number = switch to group
+            Key(
+                [mod],
+                i.name,
+                lazy.group[i.name].toscreen(),
+                desc="Switch to group {}".format(i.name),
+            ),
+            # mod1 + shift + group number = switch to & move focused window to group
+            Key(
+                [mod, "shift"],
+                i.name,
+                lazy.window.togroup(i.name, switch_group=True),
+                desc="Switch to & move focused window to group {}".format(i.name),
+            ),
+            # Or, use below if you prefer not to switch to that group.
+            # # mod1 + shift + group number = move focused window to group
+            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
+            #     desc="move focused window to group {}".format(i.name)),
+        ]
+    )
 
 
 # DEFAULT THEME SETTINGS FOR LAYOUTS #
@@ -357,11 +375,9 @@ def init_widgets_list():
         widget.Sep(**sep_props),
         widget.Wttr(
             format=1,
-            location= {"Home": "70619"},
+            location={"Home": "70619"},
             mouse_callbacks={
-                "Button1": lambda: qtile.spawn(
-                    myTerm + " --hold -e wttr 70619"
-                )
+                "Button1": lambda: qtile.spawn(myTerm + " --hold -e wttr 70619")
             },
         ),
         widget.Sep(**sep_props),
@@ -436,21 +452,30 @@ mouse = [
 ]
 
 dgroups_key_binder = None
-dgroups_app_rules = []  # type: List
-main = None
+dgroups_app_rules = []  # type: list
 follow_mouse_focus = True
 bring_front_click = False
+floats_kept_above = True
 cursor_warp = False
-
 floating_layout = layout.Floating(
     float_rules=[
+        # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
-        Match(title="emulator"),
+        Match(wm_class="confirmreset"),  # gitk
+        Match(wm_class="makebranch"),  # gitk
+        Match(wm_class="maketag"),  # gitk
+        Match(wm_class="ssh-askpass"),  # ssh-askpass
+        Match(title="branchdialog"),  # gitk
+        Match(title="pinentry"),  # GPG key password entry
     ]
 )
-
 auto_fullscreen = True
 focus_on_window_activation = "smart"
+reconfigure_screens = True
+
+# If things like steam games want to auto-minimize themselves when losing
+# focus, should we respect this or not?
+auto_minimize = True
 
 # STARTUP APPLICATIONS #
 
