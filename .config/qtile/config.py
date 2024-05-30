@@ -1,14 +1,13 @@
 import os
 import subprocess
 from Xlib import display as xdisplay
-from libqtile import qtile
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
 from libqtile.log_utils import logger
 from libqtile import layout, bar, widget, hook
 
 from qtile_extras.popup.toolkit import PopupRelativeLayout, PopupImage, PopupText
-from qtile_extras.widget.upower import UPowerWidget
+from qtile_extras.widget import UPowerWidget, PulseVolume
 
 # DEFINING SOME VARIABLES #
 mod = "mod4"  # Sets mod key to SUPER/WINDOWS
@@ -32,7 +31,8 @@ def get_num_monitors():
         resources = screen.root.xrandr_get_screen_resources()
 
         for output in resources.outputs:
-            monitor = display.xrandr_get_output_info(output, resources.config_timestamp)
+            monitor = display.xrandr_get_output_info(
+                output, resources.config_timestamp)
             preferred = False
             if hasattr(monitor, "preferred"):
                 preferred = monitor.preferred
@@ -216,7 +216,8 @@ keys = [
         lazy.layout.toggle_split(),
     ),
     # Dmenu scripts launched with ALT + CTRL + KEY
-    Key(["mod1", "control"], "e", lazy.spawn("./.dmenu/dmenu-edit-configs.sh")),
+    Key(["mod1", "control"], "e", lazy.spawn(
+        "./.dmenu/dmenu-edit-configs.sh")),
     # My applications launched with SUPER + ALT + KEY
     Key([mod], "s", lazy.spawn("pavucontrol-qt")),
     # Special Keybindings
@@ -236,7 +237,8 @@ keys = [
             ' @DEFAULT_SINK@ -5%"'
         ),
     ),
-    Key([], "XF86AudioMute", lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
+    Key([], "XF86AudioMute", lazy.spawn(
+        "pactl set-sink-mute @DEFAULT_SINK@ toggle")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("light -A 10")),
     Key([], "XF86MonBrightnessDown", lazy.spawn("light -U 10")),
 ]
@@ -272,7 +274,8 @@ for i in groups:
                 [mod, "shift"],
                 i.name,
                 lazy.window.togroup(i.name, switch_group=True),
-                desc="Switch to & move focused window to group {}".format(i.name),
+                desc="Switch to & move focused window to group {}".format(
+                    i.name),
             ),
             # Or, use below if you prefer not to switch to that group.
             # # mod1 + shift + group number = move focused window to group
@@ -335,10 +338,7 @@ def init_widgets_list():
             **sep_props,
         ),
         widget.WindowName(padding=5),
-        widget.Notify(
-            padding=5,
-            default_timeout=5,
-        ),
+        widget.Notify(scroll=True,width=800),
         widget.WidgetBox(
             widgets=[
                 widget.Memory(padding=5),
@@ -356,7 +356,7 @@ def init_widgets_list():
         ),
         widget.Sep(**sep_props),
         widget.TextBox(text="🔊", padding=0, fontsize=14),
-        widget.PulseVolume(
+        PulseVolume(
             padding=5, limit_max_volume=True, volume_app="pavucontrol-qt"
         ),
         widget.Sep(**sep_props),
@@ -373,12 +373,11 @@ def init_widgets_list():
             scale=0.7,
         ),
         widget.Sep(**sep_props),
-        widget.Wttr(
-            format=1,
-            location={"Home": "70619"},
-            mouse_callbacks={
-                "Button1": lambda: qtile.spawn(myTerm + " --hold -e wttr 70619")
-            },
+        widget.OpenWeather(
+            zip="70619",
+            language="de",
+            location="Stuttgart,DE",
+            format="{main_temp} °{units_temperature} {humidity}% {icon}"
         ),
         widget.Sep(**sep_props),
         widget.Clock(
