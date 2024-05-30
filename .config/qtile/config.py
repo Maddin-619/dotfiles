@@ -1,10 +1,10 @@
 import os
 import subprocess
 from Xlib import display as xdisplay
-from libqtile.config import Key, Screen, Group, Drag, Click, Match
-from libqtile.command import lazy
-from libqtile.log_utils import logger
 from libqtile import layout, bar, widget, hook
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
+from libqtile.lazy import lazy
+from libqtile.log_utils import logger
 
 from qtile_extras.popup.toolkit import PopupRelativeLayout, PopupImage, PopupText
 from qtile_extras.widget import UPowerWidget, PulseVolume
