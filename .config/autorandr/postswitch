@@ -8,5 +8,5 @@ fi
 if [[ $(qtile cmd-obj -o cmd -f status) == \'OK\' ]]
 then
   nitrogen --restore
-  qtile cmd-obj -o cmd -f restart
+  qtile cmd-obj -o cmd -f reload_config
 fi
