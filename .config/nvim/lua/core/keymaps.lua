@@ -93,7 +93,7 @@ map(
 )
 
 -- Switch to other buffer/tabs
-map("n", "<TAB>", ":tabnext<CR>")
+-- map("n", "<TAB>", ":tabnext<CR>")
 map("n", "<S-TAB>", ":tabprevious<CR>")
 map("n", "<leader>tn", ":tabnew<cr>")
 map("n", "<leader>tc", ":tabclose<cr>")

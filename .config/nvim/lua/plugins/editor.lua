@@ -163,10 +163,23 @@ return {
             require("neo-tree.command").execute({ action = "close" })
           end,
         },
+        {
+          event = "file_moved",
+          handler = function(data)
+            Snacks.rename.on_rename_file(data.source, data.destination)
+          end,
+        },
+        {
+          event = "file_renamed",
+          handler = function(data)
+            Snacks.rename.on_rename_file(data.source, data.destination)
+          end,
+        },
       },
       filesystem = {
         filtered_items = {
           hide_dotfiles = false,
+          hide_gitignored = false,
           hide_by_name = { ".git" },
         },
         follow_current_file = { enabled = true },
@@ -413,7 +426,7 @@ return {
   -- toggleterm.nvim
   {
     "akinsho/toggleterm.nvim",
-    version = "*",
+    -- version = "*",
     keys = function()
       local Terminal = require("toggleterm.terminal").Terminal
       local lazygit = Terminal:new({
@@ -440,12 +453,12 @@ return {
       local ret = {
         {
           "<leader>tv",
-          "<cmd>ToggleTerm direction=vertical<CR>",
+          "<cmd>TermNew direction=vertical<CR>",
           desc = "Open a vertical terminal",
         },
         {
           "<leader>th",
-          "<cmd>ToggleTerm direction=horizontal<CR>",
+          "<cmd>TermNew direction=horizontal<CR>",
           desc = "Open a horizontal terminal",
         },
         {
@@ -495,7 +508,7 @@ return {
     opts = {
       bigfile = { enabled = true },
       dashboard = {
-        enabled = true,
+        enabled = false,
         preset = {
           pick = "nil",
           keys = {
@@ -933,7 +946,7 @@ return {
         desc = "References",
       },
       {
-        "gI",
+        "gi",
         function()
           Snacks.picker.lsp_implementations()
         end,
@@ -1119,21 +1132,6 @@ return {
           Snacks.toggle.indent():map("<leader>ug")
           Snacks.toggle.dim():map("<leader>uD")
         end,
-      })
-    end,
-  },
-
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    opts = function(_, opts)
-      local function on_move(data)
-        Snacks.rename.on_rename_file(data.source, data.destination)
-      end
-      local events = require("neo-tree.events")
-      opts.event_handlers = opts.event_handlers or {}
-      vim.list_extend(opts.event_handlers, {
-        { event = events.FILE_MOVED, handler = on_move },
-        { event = events.FILE_RENAMED, handler = on_move },
       })
     end,
   },

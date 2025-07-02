@@ -232,8 +232,19 @@ return {
       },
       cmdline = {
         enabled = true,
+        keymap = {
+          ["<CR>"] = { "accept_and_enter", "fallback" },
+        },
         completion = {
           menu = { auto_show = true },
+          list = {
+            selection = {
+              -- When `true`, will automatically select the first item in the completion list
+              preselect = false,
+              -- When `true`, inserts the completion item automatically when selecting it
+              auto_insert = false,
+            },
+          },
         },
       },
       completion = {
@@ -260,6 +271,17 @@ return {
           "buffer",
         },
         providers = {
+          cmdline = {
+            min_keyword_length = function(ctx)
+              -- when typing a command, only show when the keyword is 3 characters or longer
+              if
+                ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil
+              then
+                return 3
+              end
+              return 0
+            end,
+          },
           lazydev = {
             name = "LazyDev",
             module = "lazydev.integrations.blink",

@@ -7,9 +7,7 @@
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 
 return {
-  -- NOTE: Yes, you can install new plugins here!
   "mfussenegger/nvim-dap",
-  -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
     "rcarriga/nvim-dap-ui",
@@ -18,8 +16,12 @@ return {
     "nvim-neotest/nvim-nio",
 
     -- Installs the debug adapters for you
-    "williamboman/mason.nvim",
-    "jay-babu/mason-nvim-dap.nvim",
+    {
+      "jay-babu/mason-nvim-dap.nvim",
+      dependencies = {
+        "williamboman/mason.nvim",
+      },
+    },
 
     -- Add your own debuggers here
     "leoluz/nvim-dap-go",
@@ -99,13 +101,14 @@ return {
 
       -- You can provide additional configuration to the handlers,
       -- see mason-nvim-dap README for more information
-      handlers = nil,
+      handlers = {},
 
       -- You'll need to check that you have the required things installed
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         "delve",
+        "cpptools",
       },
     })
 
@@ -254,19 +257,15 @@ return {
             table.insert(args, w)
           end
           local session = dap.session()
-          session:request(
-            "variables",
-            {
-              variablesReference = tonumber(args[1]),
-              count = tonumber(args[2]),
-            },
-            function(err, response)
-              if not response then
-                return
-              end
-              dap.repl.append(response.data)
+          session:request("variables", {
+            variablesReference = tonumber(args[1]),
+            count = tonumber(args[2]),
+          }, function(err, response)
+            if not response then
+              return
             end
-          )
+            dap.repl.append(response.data)
+          end)
         end,
       },
     })

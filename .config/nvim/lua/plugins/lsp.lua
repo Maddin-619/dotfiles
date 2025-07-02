@@ -198,8 +198,9 @@ return {
         css = { "prettierd" }, ]]
         json = { "prettierd" },
         toml = { "taplo" },
-        --[[ cpp = { "clang-format" },
-        c = { "clang-format" }, ]]
+        go = { "golines" },
+        cpp = { "clang-format" },
+        c = { "clang-format" },
         ["*"] = {
           "trim_whitespace",
           "squeeze_blanks",
@@ -238,6 +239,12 @@ return {
     event = "BufWritePost",
     config = function()
       local lint = require("lint")
+      lint.linters.revive.args = {
+        "-formatter",
+        "json",
+        "-config",
+        "./revive.toml",
+      }
       lint.linters_by_ft = {
         lua = { "luac", "selene" },
         bash = {
@@ -246,6 +253,7 @@ return {
         },
         zsh = { "zsh" },
         markdown = { "markdownlint" },
+        go = { "revive" },
         --[[ html = { "markuplint" },
         css = { "stylelint" },
         cpp = { "cpplint" },
@@ -339,7 +347,7 @@ return {
     end,
     keys = {
       {
-        "gf",
+        "<M-CR>",
         function()
           return require("actions-preview").code_actions()
         end,
