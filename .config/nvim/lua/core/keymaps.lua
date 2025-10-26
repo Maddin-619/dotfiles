@@ -55,9 +55,6 @@ map(
   { desc = "Increase window width" }
 )
 
--- Open lazy.nvim
-map("n", "<leader>l", vim.cmd.Lazy, { desc = "Open lazy.nvim" })
-
 -- Better indenting
 map("v", "<", "<gv")
 map("v", ">", ">gv")
@@ -93,8 +90,8 @@ map(
 )
 
 -- Switch to other buffer/tabs
--- map("n", "<TAB>", ":tabnext<CR>")
-map("n", "<S-TAB>", ":tabprevious<CR>")
+map("n", "<leader>l", ":tabnext<CR>")
+map("n", "<leader>h", ":tabprevious<CR>")
 map("n", "<leader>tn", ":tabnew<cr>")
 map("n", "<leader>tc", ":tabclose<cr>")
 map("n", "<leader>bd", ":bd<CR>")
@@ -151,3 +148,14 @@ map("n", "<M>s?", "z=")
 -- Quickly open a buffer for scribble
 map("n", "<leader>n", ":e ~/buffer<cr>")
 map("n", "<leader>ns", ":e ~/buffer.gpg<cr>")
+
+map("n", "gf", function()
+  local f = vim.fn.findfile(vim.fn.expand("<cfile>"), "**")
+  if f == "" then
+    Snacks.notify.warn("No file under cursor")
+  else
+    vim.schedule(function()
+      vim.cmd("e " .. f)
+    end)
+  end
+end)

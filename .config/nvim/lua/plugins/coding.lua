@@ -195,7 +195,7 @@ return {
   {
     "saghen/blink.cmp",
     event = "InsertEnter",
-    dependencies = { "L3MON4D3/LuaSnip", version = "v2.*" },
+    dependencies = "rafamadriz/friendly-snippets",
     version = "1.*",
     ---@module "blink.cmp"
     ---@type blink.cmp.Config
@@ -203,7 +203,6 @@ return {
       enabled = function()
         return vim.bo.buftype ~= "prompt" and vim.b.completion ~= false
       end,
-      snippets = { preset = "luasnip" },
       fuzzy = {
         sorts = {
           "exact",
@@ -271,17 +270,17 @@ return {
           "buffer",
         },
         providers = {
-          cmdline = {
-            min_keyword_length = function(ctx)
-              -- when typing a command, only show when the keyword is 3 characters or longer
-              if
-                ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil
-              then
-                return 3
-              end
-              return 0
-            end,
-          },
+          -- cmdline = {
+          --   min_keyword_length = function(ctx)
+          --     -- when typing a command, only show when the keyword is 3 characters or longer
+          --     if
+          --       ctx.mode == "cmdline" and string.find(ctx.line, " ") == nil
+          --     then
+          --       return 3
+          --     end
+          --     return 0
+          --   end,
+          -- },
           lazydev = {
             name = "LazyDev",
             module = "lazydev.integrations.blink",

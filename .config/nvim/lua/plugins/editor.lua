@@ -66,10 +66,7 @@ return {
   },
 
   -- vim-cool
-  { "romainl/vim-cool", keys = { "/", "?", "*", "#", "g*", "g#", "n", "N" } },
-  -- HACK: There doesn't seem to be an autocommand event to detect when you start
-  -- searching, so this will have to do until I can find an event for that or until neovim creates that event
-  -- Related: https://github.com/neovim/neovim/issues/18879
+  { "romainl/vim-cool", event = "VeryLazy" },
 
   -- neo-tree.nvim
   {
@@ -290,6 +287,12 @@ return {
         )
       end,
     },
+    config = function(_, opts)
+      local leap = require("leap")
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+    end,
   },
 
   -- flit.nvim
@@ -380,11 +383,6 @@ return {
       },
       { "<leader>gd", "<cmd>Gitsigns diffthis<CR>", desc = "Open a diff" },
       {
-        "<leader>gq",
-        "<cmd>Gitsigns setqflist<CR>",
-        desc = "Open quickfix list with hunks",
-      },
-      {
         "<leader>gl",
         "<cmd>Gitsigns setloclist<CR>",
         desc = "Open location list with hunks",
@@ -423,78 +421,123 @@ return {
     },
   },
 
-  -- toggleterm.nvim
   {
-    "akinsho/toggleterm.nvim",
-    -- version = "*",
-    keys = function()
-      local Terminal = require("toggleterm.terminal").Terminal
-      local lazygit = Terminal:new({
-        cmd = "lazygit",
-        hidden = true,
-        direction = "float",
-        on_open = function(term)
-          vim.cmd("startinsert!")
-          vim.api.nvim_buf_set_keymap(
-            term.bufnr,
-            "n",
-            "q",
-            "close",
-            { noremap = true, silent = true }
-          )
-        end,
-        on_close = function(term)
-          vim.cmd("startinsert!")
-        end,
-      })
-      function _lazygit_toggle()
-        lazygit:toggle()
-      end
-      local ret = {
-        {
-          "<leader>tv",
-          "<cmd>TermNew direction=vertical<CR>",
-          desc = "Open a vertical terminal",
-        },
-        {
-          "<leader>th",
-          "<cmd>TermNew direction=horizontal<CR>",
-          desc = "Open a horizontal terminal",
-        },
-        {
-          "<leader>tf",
-          "<cmd>ToggleTerm direction=float<CR>",
-          desc = "Open a floating terminal",
-        },
-        {
-          "<leader>'",
-          "<cmd>lua _lazygit_toggle()<CR>",
-          desc = "Open a floating terminal",
-          noremap = true,
-          silent = true,
-        },
-      }
-      return ret
-    end,
+    "waiting-for-dev/ergoterm.nvim",
     opts = {
-      size = function(term)
-        if term.direction == "horizontal" then
-          return 15
-        elseif term.direction == "vertical" then
-          return math.ceil(vim.o.columns * 0.4)
-        else
-          return 20
-        end
-      end,
-      hide_numbers = true,
-      shell = vim.o.shell,
-      shade_terminals = true,
-      shading_factor = 2,
-      persist_size = true,
-      start_in_insert = false,
-      direction = "float",
-      close_on_exit = true,
-      float_opts = { border = "curved" },
+      -- Terminal defaults - applied to all new terminals but overridable per instance
+      terminal_defaults = {
+        -- Default shell command
+        shell = vim.o.shell,
+
+        -- Default window layout
+        layout = "below",
+
+        -- Auto-scroll terminal output
+        auto_scroll = true,
+
+        -- Close terminal window when job exits
+        close_on_job_exit = true,
+
+        -- Remember terminal mode between visits
+        persist_mode = false,
+
+        -- Start terminals in insert mode
+        start_in_insert = true,
+
+        -- Show terminals in picker by default
+        selectable = true,
+
+        -- Keep terminals visible in picker even when stopped, provided `selectable` is also true
+        sticky = false,
+
+        -- Floating window options
+        float_opts = {
+          title_pos = "left",
+          relative = "editor",
+          border = "single",
+          zindex = 50,
+        },
+
+        -- Floating window transparency
+        float_winblend = 10,
+
+        -- Size configuration for different layouts
+        size = {
+          below = "20%", -- 50% of screen height
+          above = "20%", -- 50% of screen height
+          left = "40%", -- 50% of screen width
+          right = "40%", -- 50% of screen width
+        },
+
+        -- Clean job environment
+        clear_env = false,
+
+        -- Environment variables for terminal jobs
+        env = nil, -- Example: { PATH = "/custom/path", DEBUG = "1" }
+
+        -- Default callbacks (all no-ops by default)
+        on_close = function(term) end,
+        on_create = function(term) end,
+        on_focus = function(term) end,
+        on_job_exit = function(term, job_id, exit_code, event_name) end,
+        on_job_stderr = function(term, channel_id, data_lines, stream_name) end,
+        on_job_stdout = function(term, channel_id, data_lines, stream_name) end,
+        on_open = function(term) end,
+        on_start = function(term) end,
+        on_stop = function(term) end,
+      },
+
+      -- Picker configuration
+      picker = {
+        -- Picker to use for terminal selection
+        -- Can be "telescope", "fzf-lua", "vim-ui-select", or a custom picker object
+        -- nil = auto-detect (telescope > fzf-lua > vim.ui.select)
+        picker = nil,
+
+        -- Default actions available in terminal picker
+        -- These replace the built-in actions entirely
+        select_actions = {
+          default = {
+            fn = function(term)
+              term:focus()
+            end,
+            desc = "Open",
+          },
+          ["<C-s>"] = {
+            fn = function(term)
+              term:focus("below")
+            end,
+            desc = "Open in horizontal split",
+          },
+          ["<C-v>"] = {
+            fn = function(term)
+              term:focus("right")
+            end,
+            desc = "Open in vertical split",
+          },
+          ["<C-t>"] = {
+            fn = function(term)
+              term:focus("tab")
+            end,
+            desc = "Open in tab",
+          },
+          ["<C-f>"] = {
+            fn = function(term)
+              term:focus("float")
+            end,
+            desc = "Open in float window",
+          },
+        },
+
+        -- Additional actions to append to select_actions
+        -- These are merged with select_actions, allowing you to add custom actions
+        -- without replacing the defaults
+        extra_select_actions = {},
+      },
+    },
+    keys = {
+      { "<leader>tt", "<cmd>TermNew<CR>", desc = "Open terminal" },
+      { "<leader>ts", "<cmd>TermSelect<CR>", desc = "Select terminal" },
     },
   },
 
@@ -569,17 +612,11 @@ return {
       indent = { enabled = true },
       input = { enabled = true },
       notifier = {
-        enabled = true,
+        enabled = false,
         timeout = 3000,
       },
       picker = {
         enabled = true,
-        sources = {
-          explorer = {
-            -- your explorer picker configuration comes here
-            -- or leave it empty to use the default settings
-          },
-        },
       },
       quickfile = { enabled = true },
       scope = { enabled = true },
@@ -631,28 +668,6 @@ return {
         desc = "Grep",
       },
       {
-        "<leader>:",
-        function()
-          Snacks.picker.command_history()
-        end,
-        desc = "Command History",
-      },
-      {
-        "<leader>n",
-        function()
-          Snacks.picker.notifications()
-        end,
-        desc = "Notification History",
-      },
-      {
-        "<leader>e",
-        function()
-          Snacks.explorer()
-        end,
-        desc = "File Explorer",
-      },
-      -- find
-      {
         "<leader>fb",
         function()
           Snacks.picker.buffers()
@@ -702,48 +717,6 @@ return {
         end,
         desc = "Git Branches",
       },
-      {
-        "<leader>gl",
-        function()
-          Snacks.picker.git_log()
-        end,
-        desc = "Git Log",
-      },
-      {
-        "<leader>gL",
-        function()
-          Snacks.picker.git_log_line()
-        end,
-        desc = "Git Log Line",
-      },
-      {
-        "<leader>gs",
-        function()
-          Snacks.picker.git_status()
-        end,
-        desc = "Git Status",
-      },
-      {
-        "<leader>gS",
-        function()
-          Snacks.picker.git_stash()
-        end,
-        desc = "Git Stash",
-      },
-      {
-        "<leader>gd",
-        function()
-          Snacks.picker.git_diff()
-        end,
-        desc = "Git Diff (Hunks)",
-      },
-      {
-        "<leader>gf",
-        function()
-          Snacks.picker.git_log_file()
-        end,
-        desc = "Git Log File",
-      },
       -- Grep
       {
         "<leader>sb",
@@ -758,13 +731,6 @@ return {
           Snacks.picker.grep_buffers()
         end,
         desc = "Grep Open Buffers",
-      },
-      {
-        "<leader>sg",
-        function()
-          Snacks.picker.grep()
-        end,
-        desc = "Grep",
       },
       {
         "<leader>sw",
@@ -996,20 +962,6 @@ return {
         desc = "Toggle Scratch Buffer",
       },
       {
-        "<leader>S",
-        function()
-          Snacks.scratch.select()
-        end,
-        desc = "Select Scratch Buffer",
-      },
-      {
-        "<leader>n",
-        function()
-          Snacks.notifier.show_history()
-        end,
-        desc = "Notification History",
-      },
-      {
         "<leader>bd",
         function()
           Snacks.bufdelete()
@@ -1024,14 +976,6 @@ return {
         desc = "Rename File",
       },
       {
-        "<leader>gB",
-        function()
-          Snacks.gitbrowse()
-        end,
-        desc = "Git Browse",
-        mode = { "n", "v" },
-      },
-      {
         "<leader>gg",
         function()
           Snacks.lazygit()
@@ -1044,20 +988,6 @@ return {
           Snacks.notifier.hide()
         end,
         desc = "Dismiss All Notifications",
-      },
-      {
-        "<c-/>",
-        function()
-          Snacks.terminal()
-        end,
-        desc = "Toggle Terminal",
-      },
-      {
-        "<c-_>",
-        function()
-          Snacks.terminal()
-        end,
-        desc = "which_key_ignore",
       },
       {
         "]]",
@@ -1182,11 +1112,59 @@ return {
   {
     "booperlv/nvim-gomove",
     config = true,
+    opts = {
+      map_defaults = false,
+    },
     keys = {
-      { "<C-h>", mode = { "n", "v" }, desc = "Block left" },
-      { "<C-j>", mode = { "n", "v" }, desc = "Block down" },
-      { "<C-k>", mode = { "n", "v" }, desc = "Block up" },
-      { "<C-l>", mode = { "n", "v" }, desc = "Block right" },
+      {
+        "<C-h>",
+        "<Plug>GoNSMLeft",
+        mode = { "n" },
+        desc = "Normal block left",
+      },
+      {
+        "<C-j>",
+        "<Plug>GoNSMDown",
+        mode = { "n" },
+        desc = "Normal block left",
+      },
+      {
+        "<C-k>",
+        "<Plug>GoNSMUp",
+        mode = { "n" },
+        desc = "Normal block left",
+      },
+      {
+        "<C-l>",
+        "<Plug>GoNSMRight",
+        mode = { "n" },
+        desc = "Normal block left",
+      },
+
+      {
+        "<C-h>",
+        "<Plug>GoVSMLeft",
+        mode = { "v" },
+        desc = "Visual block left",
+      },
+      {
+        "<C-j>",
+        "<Plug>GoVSMDown",
+        mode = { "v" },
+        desc = "Visual block left",
+      },
+      {
+        "<C-k>",
+        "<Plug>GoVSMUp",
+        mode = { "v" },
+        desc = "Visual block left",
+      },
+      {
+        "<C-l>",
+        "<Plug>GoVSMRight",
+        mode = { "v" },
+        desc = "Visual block left",
+      },
     },
   },
 
@@ -1282,6 +1260,15 @@ return {
         mode = "i",
       },
     },
+  },
+
+  -- vim-lastplace
+  {
+    "farmergreg/vim-lastplace",
+    event = { "BufReadPre", "BufNewFile" },
+    init = function()
+      vim.g.lastplace_open_folds = 0
+    end,
   },
 
   -- vim-kitty

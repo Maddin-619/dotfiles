@@ -122,18 +122,11 @@ autocmd("VimLeavePre", {
   end,
 })
 
--- When term starts, auto go into insert mode
-autocmd("TermOpen", {
-  pattern = "*",
-  callback = function()
-    vim.cmd("startinsert")
-  end,
-})
-
 -- Turn off line numbers etc
-autocmd("TermOpen", {
-  pattern = "*",
+autocmd("FileType", {
+  pattern = "ErgoTerm",
   callback = function()
+    vim.opt_local.list = false
     vim.opt_local.listchars = ""
     vim.opt_local.number = false
     vim.opt_local.relativenumber = false
@@ -141,7 +134,7 @@ autocmd("TermOpen", {
 })
 
 -- Make sure that enter is never overridden in the quickfix window
-vim.api.nvim_create_autocmd("BufReadPost", {
+autocmd("BufReadPost", {
   pattern = "quickfix",
   callback = function()
     vim.api.nvim_buf_set_keymap(
@@ -155,7 +148,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 -- Custom mapping for the quickfix window
-vim.api.nvim_create_autocmd("FileType", {
+autocmd("FileType", {
   pattern = "qf",
   callback = function()
     vim.api.nvim_buf_set_keymap(

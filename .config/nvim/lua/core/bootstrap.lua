@@ -30,7 +30,7 @@ require("lazy").setup({
   rocks = { enabled = false },
   git = { log = { "--since=3 days ago" }, timeout = 60 },
   ui = { custom_keys = { false }, backdrop = 100 },
-  install = { colorscheme = { "tokyonight" } },
+  install = { colorscheme = { "vscode" } },
   checker = { enabled = true },
   diff = {
     cmd = "terminal_git",
