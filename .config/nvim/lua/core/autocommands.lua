@@ -124,7 +124,7 @@ autocmd("VimLeavePre", {
 
 -- Turn off line numbers etc
 autocmd("FileType", {
-  pattern = "ErgoTerm",
+  pattern = "ergoterm",
   callback = function()
     vim.opt_local.list = false
     vim.opt_local.listchars = ""

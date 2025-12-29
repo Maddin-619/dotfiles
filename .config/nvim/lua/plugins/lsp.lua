@@ -199,6 +199,7 @@ return {
         go = { "golines" },
         cpp = { "clang-format" },
         c = { "clang-format" },
+        rust = { "rustfmt", lsp_format = "fallback" },
         ["*"] = {
           "trim_whitespace",
           "squeeze_blanks",
