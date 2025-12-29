@@ -1,0 +1,13 @@
+/* This is where you can change fonts and sizes */
+
+
+/*****-- Fonts Size and Font Size -----*****/
+configuration {
+  font: "Hack Nerd Font SemiBold 15";
+}
+
+
+/*****-- Elements Font Size -----*****/
+element-text {
+  font: "Hack Nerd Font SemiBold 13";
+}

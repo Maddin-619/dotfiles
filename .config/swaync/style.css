@@ -1,0 +1,5 @@
+/* swaync colors - wallust from waybar.css */
+
+@import './wallust/colors-wallust.css';
+@import './notifications.css';
+@import './control_center.css';

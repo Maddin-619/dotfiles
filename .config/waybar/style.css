@@ -1,0 +1,122 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Hack Nerd Font";
+    font-size: 13px;
+    min-height: 0;
+}
+
+@define-color text @forground;
+@define-color error @color1;
+
+@import '../../.config/waybar/wallust/colors-waybar.css';
+
+window#waybar {
+    background: rgba(255, 255, 255, 0.1);
+    color: @text;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+window#waybar>box {
+    padding: 0 10px;
+}
+
+#window {
+    font-weight: bold;
+}
+
+#workspaces {
+    font-weight: bold;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background: transparent;
+    color: @text;
+    border-top: 2px solid transparent;
+}
+
+#workspaces button.empty {
+    color: @color8;
+    border-top: none;
+}
+
+#workspaces button.visible {
+    color: @color2;
+    border-top: none;
+}
+
+#workspaces button.visible.hosting-monitor:not(.active){
+    color: @color4;
+    border-top: 2px solid @color4;
+}
+
+#workspaces button.visible:not(.hosting-monitor):not(.active){
+    color: @color4;
+    border-top: none;
+}
+
+#workspaces button.visible.active.hosting-monitor{
+    color: @color2;
+    border-top: 2px solid @color2;
+}
+
+#clock, #battery, #cpu, #memory, #network, #pulseaudio, #tray, #mode, #power-profiles-daemon, #language, #custom-notification {
+    padding: 0 3px;
+    margin: 0 2px;
+}
+
+#clock {
+    font-weight: bold;
+}
+
+#battery {
+    padding: 0 8px 0 0;
+}
+
+#battery icon {
+    color: @error;
+}
+
+#battery.charging {
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: black;
+    }
+}
+
+#battery.warning:not(.charging) {
+    color: @text;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#cpu {
+}
+
+#memory {
+}
+
+#network {
+}
+
+#network.disconnected {
+    background: @error;
+}
+
+#pulseaudio {
+}
+
+#pulseaudio.muted {
+}
+
+#tray {
+}
