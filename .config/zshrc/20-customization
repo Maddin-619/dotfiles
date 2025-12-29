@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# CUSTOMIZATION
+# -----------------------------------------------------
+
+# -----------------------------------------------------
+# oh-myzsh themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# -----------------------------------------------------
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# -----------------------------------------------------
+# oh-myzsh plugins
+# -----------------------------------------------------
+plugins=(
+    copyfile
+    copybuffer
+    docker-compose
+    docker
+    git
+    git-flow
+    helm
+    history-substring-search
+    kubectl
+    mvn
+    npm
+    pip
+    rust
+    sudo
+    vi-mode
+    yarn
+    zsh-nvm
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    fast-syntax-highlighting
+)
+
+zstyle ':omz:plugins:nvm' lazy yes
+fpath+="${ZSH_CUSTOM:-"$ZSH/custom"}/plugins/zsh-completions/src"
+
+export NVM_LAZY_LOAD_EXTRA_COMMANDS=('nvim')
+export NVM_LAZY_LOAD=true
+export NVM_COMPLETION=true
+
+# Set-up oh-my-zsh
+source $ZSH/oh-my-zsh.sh
+
+# -----------------------------------------------------
+# Set-up FZF key bindings (CTRL R for fuzzy history finder)
+# -----------------------------------------------------
+source <(fzf --zsh)
+
+# zsh history
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt appendhistory

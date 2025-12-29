@@ -1,0 +1,39 @@
+# -----------------------------------------------------
+# ALIASES
+# -----------------------------------------------------
+
+# -----------------------------------------------------
+# General
+# -----------------------------------------------------
+alias c='clear'
+alias nf='fastfetch'
+alias pf='fastfetch'
+alias ff='fastfetch'
+alias ls='eza -a --icons=always'
+alias ll='eza -al --icons=always'
+alias lt='eza -a --tree --level=1 --icons=always'
+alias la='erd --level 1 -I --hidden --no-ignore --long --group -H --suppress-size'
+alias laa='erd --level 1 -I --hidden --no-ignore --long --group -H --sort name'
+alias v='$EDITOR'
+alias vim='$EDITOR'
+
+alias rr='curl -s -L https://raw.githubusercontent.com/keroserene/rickrollrc/master/roll.sh | bash'
+alias config="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
+alias cp="cp -i"                          # confirm before overwriting something
+alias df='df -h'                          # human-readable sizes
+alias grep='grep --colour=auto'
+alias ls='ls --color=auto'
+alias aur="paru -Sql | fzf -m --preview 'cat <(paru -Si {1}) <(paru -Fl {1} | awk \"{print \$2}\")' | xargs -ro  paru -S"
+
+# -----------------------------------------------------
+# Window Managers
+# -----------------------------------------------------
+
+
+# -----------------------------------------------------
+# Scripts
+# -----------------------------------------------------
+
+# -----------------------------------------------------
+# System
+# -----------------------------------------------------
