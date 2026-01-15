@@ -1,101 +1,277 @@
-@define-color red @color1;
-@define-color primary @color4;
-@define-color text @forground;
-@define-color crust @cursor;
-@define-color base alpha(@background, 0.9);
+notificationwindow, blankwindow, blankwindow {
+  background: transparent;
+}
 
-* {
-  color: @text;
-  all: unset;
-  font-size: 1rem;
-  font-family: "Hack Nerd Font 10";
-  transition: 200ms;
+.close-button {
+  /* The notification Close Button */
+  background: var(--noti-close-bg);
+  color: var(--text-color);
+  text-shadow: none;
+  padding: 0;
+  border-radius: 100%;
+  margin-top: 8px;
+  margin-right: 8px;
+  box-shadow: none;
+  border: none;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.close-button:hover {
+  box-shadow: none;
+  background: var(--noti-close-bg-hover);
+  transition: var(--hover-transition);
+  border: none;
 }
 
 .notification-row {
+  background: none;
   outline: none;
+}
+
+.notification-row:focus {
+  background: var(--noti-bg-focus);
+}
+
+.notification-row .notification-background {
+  padding: 6px 12px;
+}
+
+.notification-row .notification-background .notification {
+  /* The actual notification */
+  /* border-radius: var(--border-radius);
+  border: var(--border); */
+  padding: 0;
+  transition: var(--hover-transition);
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+}
+
+.notification-row .notification-background .notification.low {
+  /* Low Priority Notification */
+}
+
+.notification-row .notification-background .notification.normal {
+  /* Normal Priority Notification */
+}
+
+.notification-row .notification-background .notification.critical {
+  /* Critical Priority Notification */
+}
+
+.notification-row .notification-background .notification .notification-default-action {
+  /* The large action that also displays the notification summary and body */
+  padding: 6px;
   margin: 0;
-  padding: 0px;
-}
-
-.floating-notifications.background .notification-row .notification-background {
-  background: @base;
-  border-radius: 20px;
-  border: 2px solid @primary;
-  margin: 0;
-  padding: 8px 8px 0 8px;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification {
-  padding: 0.4rem;
-  border-radius: 0.8rem;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification.critical {
-  border: 2px solid @red;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification .notification-content {
-  margin: 1rem;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* {
-  min-height: 3.4em;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action {
-  border-radius: 0.5rem;
-  background-color: alpha(@crust, 0.95);
-  margin: 0.4rem;
-  border: 1px solid transparent;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action:hover {
-  background-color: @hover;
-  border: 1px solid @primary;
-}
-
-.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action:active {
-  background-color: @primary;
-  color: @text;
-}
-
-.image {
-  margin: 10px 20px 10px 0px;
-}
-
-.summary {
-  font-weight: 800;
-  font-size: 1rem;
-}
-
-.body {
-  font-size: 0.8rem;
-}
-
-.floating-notifications.background .notification-row .notification-background .close-button {
+  box-shadow: none;
   background: transparent;
-  border-radius: 20px;
-  color: @text;
-  background-color: alpha(#fff, 0.1);
-  margin: 0px;
+  border: none;
+  color: var(--text-color);
+  transition: var(--hover-transition);
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action:hover {
+  -gtk-icon-filter: none;
+  background: var(--noti-bg-hover);
+}
+
+.notification-row .notification-background .notification .notification-default-action:not(:only-child) {
+  /* When alternative actions are visible */
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content {
+  background: transparent;
+  border-radius: var(--border-radius);
+  padding: 0;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .image {
+  /* Notification Primary Image */
+  -gtk-icon-filter: none;
+  -gtk-icon-size: var(--notification-icon-size);
+  border-radius: 100px;
+  /* Size in px */
+  margin: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .app-icon {
+  /* Notification app icon (only visible when the primary image is set) */
+  -gtk-icon-filter: none;
+  -gtk-icon-size: var(--notification-app-icon-size);
+  -gtk-icon-shadow: 0 1px 4px black;
+  margin: 6px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box label {
+  /* Fixes base GTK 4 CSS setting a filter of opacity 50% for some odd reason */
+  filter: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .summary {
+  /* Notification summary/title */
+  font-size: var(--font-size-summary);
+  font-weight: bold;
+  background: transparent;
+  color: var(--text-color);
+  text-shadow: none;
+  margin-bottom: 3px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .time {
+  /* Notification time-ago */
+  font-size: var(--font-size-summary);
+  font-weight: bold;
+  background: transparent;
+  color: var(--text-color);
+  text-shadow: none;
+  margin-right: 30px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .body {
+  /* Notification body */
+  font-size: var(--font-size-body);
+  font-weight: normal;
+  background: transparent;
+  color: var(--text-color);
+  text-shadow: none;
+  line-height: 1.20;
+  margin-bottom: 3px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content progressbar {
+  /* The optional notification progress bar */
+  margin-top: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .body-image {
+  /* The "extra" optional bottom notification image */
+  margin-top: 4px;
+  background-color: white;
+  -gtk-icon-filter: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply {
+  /* The inline reply section */
+  margin-top: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-entry {
+  background: var(--noti-bg-darker);
+  color: var(--text-color);
+  caret-color: var(--text-color);
+  border: var(--border);
+  border-radius: var(--border-radius);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button {
+  margin-left: 4px;
+  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+  border: var(--border);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button:disabled {
+  background: initial;
+  color: var(--text-color-disabled);
+  border: var(--border);
+  border-color: transparent;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button:hover {
+  background: var(--noti-bg-hover);
+}
+
+.notification-row .notification-background .notification .notification-alt-actions {
+  background: none;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
   padding: 4px;
 }
 
-.floating-notifications.background .notification-row .notification-background .close-button:hover {
-  background-color: @primary;
+.notification-row .notification-background .notification .notification-action {
+  /* The alternative actions below the default action */
+  margin: 4px;
+  padding: 0;
 }
 
-.floating-notifications.background .notification-row .notification-background .close-button:active {
-  background-color: @primary;
-  color: @text;
+.notification-row .notification-background .notification .notification-action > button {
+  border-radius: var(--border-radius);
+  color: var(--text-color);
 }
 
-.notification.critical progress {
-  background-color: @primary;
+.notification-group {
+  /* Styling only for Grouped Notifications */
+  transition: opacity 200ms ease-in-out;
+  /* The groups close button */
 }
 
-.notification.low progress,
-.notification.normal progress {
-  background-color: @primary;
+.notification-group:focus {
+  background: var(--noti-bg-focus);
+}
+
+.notification-group.low {
+  /* Low Priority Group */
+}
+
+.notification-group.normal {
+  /* Low Priority Group */
+}
+
+.notification-group.critical {
+  /* Low Priority Group */
+}
+
+.notification-group .notification-group-close-button .close-button {
+  margin: 12px 20px;
+}
+
+.notification-group .notification-group-buttons, .notification-group .notification-group-headers {
+  margin: 0 16px;
+  color: var(--text-color);
+}
+
+.notification-group .notification-group-headers {
+  /* Notification Group Headers */
+}
+
+.notification-group .notification-group-headers .notification-group-icon {
+  color: var(--text-color);
+  -gtk-icon-size: var(--notification-group-icon-size);
+}
+
+.notification-group .notification-group-headers .notification-group-header {
+  color: var(--text-color);
+}
+
+.notification-group .notification-group-buttons {
+  /* Notification Group Buttons */
+}
+
+.notification-group.collapsed {
+  /* When another group is expanded, lower the opacity of the collapsed ones */
+}
+
+.notification-group.collapsed.not-expanded {
+  opacity: 0.4;
+}
+
+.notification-group.collapsed .notification-row .notification {
+  background-color: rgba(var(--noti-bg), 1);
+}
+
+.notification-group.collapsed .notification-row:not(:last-child) {
+  /* Top notification in stack */
+  /* Set lower stacked notifications opacity to 0 */
+}
+
+.notification-group.collapsed .notification-row:not(:last-child) .notification-action,
+.notification-group.collapsed .notification-row:not(:last-child) .notification-default-action {
+  opacity: 0;
+}
+
+.notification-group.collapsed:hover .notification-row:not(:only-child) .notification {
+  background-color: var(--noti-bg-hover);
 }

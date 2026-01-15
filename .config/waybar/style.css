@@ -1,7 +1,7 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: "Hack Nerd Font";
+    font-family: "GeistMono Nerd Font";
     font-size: 13px;
     min-height: 0;
 }
@@ -63,17 +63,13 @@ window#waybar>box {
     border-top: 2px solid @color2;
 }
 
-#clock, #battery, #cpu, #memory, #network, #pulseaudio, #tray, #mode, #power-profiles-daemon, #language, #custom-notification {
+#clock, #battery, #cpu, #memory, #network, #pulseaudio, #tray, #mode, #power-profiles-daemon, #language, #custom-notification #backlight #language {
     padding: 0 3px;
     margin: 0 2px;
 }
 
 #clock {
     font-weight: bold;
-}
-
-#battery {
-    padding: 0 8px 0 0;
 }
 
 #battery icon {

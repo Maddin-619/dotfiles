@@ -7,12 +7,12 @@
   "modules-left": [
     "hyprland/workspaces"
   ],
-  "modules-center": [
-    "hyprland/window"
-  ],
+  // "modules-center": [
+  //   "hyprland/window"
+  // ],
   "modules-right": [
     "pulseaudio",
-    "network",
+    // "network",
     "cpu",
     "memory",
     "backlight",
@@ -36,7 +36,7 @@
         7,
         8,
         9
-      ] // 5 workspaces by default on every monitor
+      ]
     },
     "disable-scroll": true,
     "move-to-monitor": true

@@ -1,349 +1,340 @@
-@define-color red @color1;
-@define-color primary @color4;
-
-@define-color text @forground;
-
-@define-color base alpha(@background, 0.9);
-@define-color surface alpha(@cursor, 0.2);
-@define-color hover alpha(@color6, 0.2);
-@define-color active alpha(@primary, 0.5);
-
-* {
-  color: @text;
-  /* all: unset; */
-  font-size: 1rem;
-  font-weight: 900;
-  font-family:
-    Hack Nerd Font,
-    Font Awesome,
-    Roboto,
-    Helvetica,
-    Arial,
-    sans-serif;
-  transition: 100ms;
-}
-
-/* Avoid 'annoying' backgroud */
-.blank-window {
-  background: transparent;
-}
-
-/* CONTROL CENTER ------------------------------------------------------------------------ */
-
-/* WIDGETS --------------------------------------------------------------------------- */
-
-/* Buttons menu */
-.widget-buttons-grid {
-  margin: 0 0 8px 4px;
-  border-radius: 20px;
-}
-
-.widget-buttons-grid>flowbox>flowboxchild>button {
-  margin: 0 4px 4px 0;
-  padding: 1rem 4rem;
-  background: @surface;
-  color: @crust;
-  border-radius: 999px;
-}
-
-.widget-buttons-grid>flowbox>flowboxchild>button:hover {
-  background: @hover;
-  color: @crust;
-}
-
-.widget-buttons-grid>flowbox>flowboxchild>button.toggle:checked {
-  background: @active;
-  color: @crust;
-}
-
-/* Brightness */
-.widget-backlight {
-  padding: 8px 16px;
-  margin: 0 0 8px 0;
-  border-radius: 20px;
-  background: @surface;
-}
-
-slider {}
-
-.widget-backlight label {}
-
-.widget-backlight trough {
-  background: @surface;
-  margin: 0 8px;
-}
-
-.widget-backlight trough highlight {
-  background: @active;
-  border: unset;
-}
-
-.widget-backlight button {
-  padding: 0 4px;
-}
-
-/* Volume */
-.widget-volume {
-  padding: 8px 16px;
-  margin: 0 0 8px 0;
-  border-radius: 20px;
-  background: @surface;
-}
-
-slider {}
-
-.widget-volume label {}
-
-.widget-volume trough {
-  background: @surface;
-  margin: 0 8px;
-}
-
-.widget-volume trough highlight {
-  background: @active;
-  border: unset;
-}
-
-.widget-volume button {
-  padding: 0 4px;
-}
-
-/* Music player */
-.widget-mpris {
-  background: @surface;
-  border-radius: 20px;
-  margin: 0 4px 8px 4px;
-}
-
-.widget-mpris-player {
-  border-radius: 20px;
-}
-
-.widget-mpris>box>button {
-  border-radius: 20px;
-  background: @surface;
-  border-radius: 20px;
-  padding: 2px;
-}
-
-.widget-mpris button {
-  background: @active;
-  border-radius: 20px;
-  padding: 2px;
-  margin: 0 0 8px 0;
-}
-
-.widget-mpris button:hover {
-  background: @hover;
-}
-
-.widget-mpris-album-art {
-  border-radius: 20px;
-  margin: 8px 0 0 8px;
-}
-
-.widget-mpris-title {
-  /* font-weight: 700; */
-  /* font-size: 1rem; */
-}
-
-.widget-mpris-subtitle {
-  /* font-weight: 500; */
-  /* font-size: 0.8rem; */
-}
-
-/* Notification clear button */
-.widget-title {
-  font-size: 1.5rem;
-  margin: 0 4px 0px 4px;
-}
-
-.widget-title button {
-  background: @surface;
-  border-radius: 20px;
-  padding: 4px 16px;
-}
-
-.widget-title button:hover {
-  background: @hover;
-}
-
-/* Do not disturb */
-.widget-dnd {
-  margin: 0 4px 8px 4px;
-}
-
-.widget-dnd>switch {
-  color: @text;
-  background: @surface;
-  border-radius: 20px;
-  box-shadow: none;
-  padding: 2px;
-}
-
-.widget-dnd>switch:hover {
-  background: @hover;
-  color: @crust;
-}
-
-.widget-dnd>switch:hover:checked {
-  background: @hover;
-  color: @crust;
-}
-
-.widget-dnd>switch:checked {
-  background: @active;
-  color: @crust;
-}
-
-.widget-dnd>switch slider {
-  color: @crust;
-  background: @hover;
-  border-radius: 20px;
-  border: 2px solid @active;
-}
-
-.widget-dnd>switch:checked slider {
-  color: @primary;
-  background: @active;
-}
-
-/* Buttons */
-
 .control-center {
-  background: @base;
-  border-radius: 20px;
-  border: 2px solid @primary;
-  margin: 0;
-  padding: 8px 8px 0 8px;
+  /* The Control Center which contains the old notifications + widgets */
+  background: rgba(29,31,33 0.9);
+  color: var(--text-color);
+  border-radius: var(--border-radius);
+  border: var(--border);
 }
 
-/* Notifications  */
-.control-center .notification-row .notification-background,
-.control-center .notification-row .notification-background .notification.critical {
-  background-color: @surface;
-  border-radius: 20px;
-  margin: 4px 0;
-  padding: 8px 8px 8px 16px;
+.control-center .control-center-list-placeholder {
+  /* The placeholder when there are no notifications */
+  opacity: 0.5;
 }
 
-.control-center .notification-row .notification-background .notification.critical {
-  color: @red;
-}
-
-.control-center .notification-row .notification-background .notification .notification-content
-  .text-box 
-    .summary {
-      /* Notification summary/title */
-      font-size: 1.0rem;
-      font-weight: bold;
-      background: transparent;
-      color: @text;
-      text-shadow: none;
-    }
-
-.control-center .notification-row .notification-background .notification .notification-content
-  .text-box 
-    .time {
-      /* Notification time-ago */
-      font-size: 1.0rem;
-      font-weight: bold;
-      background: transparent;
-      color: @text;
-      text-shadow: none;
-      margin-right: 30px;
-    }
-
-.control-center .notification-row .notification-background .notification .notification-content
-  .text-box 
-    .body {
-      /* Notification body */
-      font-size: 0.9rem;
-      font-weight: normal;
-      background: transparent;
-      color: @text;
-      text-shadow: none;
-}
-
-.control-center .notification-row .notification-background .notification>*:first-child>* {}
-
-.control-center .notification-row .notification-background .notification>*:last-child>* {
-  min-height: 3.4em;
-}
-
-.control-center .notification-row .notification-background .notification>*:last-child>* .notification-action {
-  background-color: @surface;
-  border-radius: 20px;
-}
-
-.control-center .notification-row .notification-background .notification>*:last-child>* .notification-action:hover {
-  background-color: @hover;
-}
-
-.control-center .notification-row .notification-background .close-button {
+.control-center .control-center-list {
+  /* List of notifications */
   background: transparent;
-  border-radius: 20px;
-  color: @text;
-  background-color: @surface;
-  margin: 0px;
-  padding: 4px;
 }
 
-.control-center .notification-row .notification-background .close-button:hover {
-  background-color: @hover;
+.control-center .control-center-list .notification {
+  box-shadow: var(--notification-shadow);
 }
 
-progressbar,
-progress,
-trough {
-  border-radius: 20px;
+.control-center .control-center-list .notification .notification-default-action,
+.control-center .control-center-list .notification .notification-action {
+  transition: var(--group-collapse-transition), var(--hover-transition);
 }
 
-progressbar {
-  background-color: @red;
+.control-center .control-center-list .notification .notification-default-action:hover,
+.control-center .control-center-list .notification .notification-action:hover {
+  background-color: var(--noti-bg-hover);
 }
 
-trough {}
-
-trough highlight {
-  padding: 8px;
-  background: @primary;
-  border: 2px solid @primary;
-  border-radius: 20px;
-}
-
-trough slider {
-  outline: none;
+/* --- Remove grey slab/shadow around notifications inside Control Center --- */
+.control-center .control-center-list .notification-group,
+.control-center .control-center-list .notification-group .notification-row,
+.control-center .control-center-list .notification-group .notification-background {
+  background-color: transparent;
+  box-shadow: none;
   border: none;
 }
 
-trough slider:hover {}
-
-/* Notifications expanded-group */
-
-.notification-group {
-  margin: 0 4px 8px 4px;
+.blank-window {
+  /* Window behind control center and on all other monitors */
+  background: transparent;
 }
 
-.notification-group-headers {
-  font-weight: 900;
-  font-size: 1.25rem;
-  letter-spacing: 2px;
+.floating-notifications {
+  background: transparent;
 }
 
-.notification-group-icon {
-  padding: 4px;
+.floating-notifications .notification {
+  box-shadow: none;
 }
 
-.notification-group-collapse-button,
-.notification-group-close-all-button {
-  background: @surface;
-  margin: 4px;
-  border-radius: 20px;
+/*** Widgets ***/
+.widget {
+  margin: 8px;
   padding: 8px;
+  border-radius: var(--border-radius);
 }
 
-.notification-group-collapse-button:hover,
-.notification-group-close-all-button:hover {
-  background: @hover;
+/* Title widget */
+.widget-title > label {
+  margin-right: 8px;
+  font-size: 1.5rem;
+}
+
+.widget-title > button {
+  margin-left: 8px;
+  border-radius: var(--border-radius);
+}
+
+/* DND widget */
+.widget-dnd label {
+  color: var(--text-color);
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+.widget-dnd switch {
+  border-radius: var(--border-radius);
+  margin-left: 8px;
+}
+
+.widget-dnd switch:checked {
+  background: var(--bg-selected);
+}
+
+.widget-dnd switch slider {
+  border-radius: var(--border-radius);
+}
+
+/* Label widget */
+.widget-label > label {
+  font-size: 1.1rem;
+}
+
+/* Mpris widget */
+:root {
+  --mpris-album-art-overlay: rgba(0, 0, 0, 0.55);
+  --mpris-button-hover: rgba(0, 0, 0, 0.5);
+  --mpris-album-art-icon-size: 96px;
+  --mpris-album-art-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
+}
+
+.widget-mpris {
+  padding: 0;
+  /* The parent to all players */
+}
+
+.widget-mpris .widget-mpris-player {
+  margin: 16px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--mpris-album-art-shadow);
+}
+
+.widget-mpris .widget-mpris-player .mpris-background {
+  filter: blur(10px);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay {
+  padding: 16px;
+  background-color: var(--mpris-album-art-overlay);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay button:hover {
+  /* The media player buttons (play, pause, next, etc...) */
+  background: var(--noti-bg-hover);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-album-art {
+  border-radius: var(--border-radius);
+  box-shadow: var(--mpris-album-art-shadow);
+  -gtk-icon-size: var(--mpris-album-art-icon-size);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-subtitle {
+  font-size: 1.1rem;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay > box > button {
+  /* Change player control buttons */
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay > box > button:hover {
+  background-color: var(--mpris-button-hover);
+}
+
+.widget-mpris > box > button {
+  /* Change player side buttons */
+}
+
+.widget-mpris > box > button:disabled {
+  /* Change player side buttons insensitive */
+}
+
+/* Buttons widget */
+.widget-buttons-grid flowboxchild > button {
+  border-radius: var(--border-radius);
+}
+
+.widget-buttons-grid flowboxchild > button.toggle:checked {
+  /* style given to the active toggle button */
+}
+
+/* Menubar widget */
+.widget-menubar {
+  /* The revealer buttons */
+  /* .AnyName { Name defined in config after #
+    background-color: rgba(var(--noti-bg), 1.0);
+    padding: 8px;
+    margin: 8px;
+    border-radius: 12px;
+  }
+
+  .AnyName>button {
+    background: transparent;
+    border: none;
+  }
+
+  .AnyName>button:hover {
+    background-color: var(--noti-bg-hover);
+  } */
+}
+
+.widget-menubar > .menu-button-bar {
+  /* The left button container */
+  /* The right button container */
+  /* The left and right button container */
+}
+
+.widget-menubar > .menu-button-bar > .start {
+  margin-left: 8px;
+}
+
+.widget-menubar > .menu-button-bar > .end {
+  margin-right: 8px;
+}
+
+.widget-menubar > .menu-button-bar > .widget-menubar-container button {
+  border-radius: var(--border-radius);
+  margin: 0 4px;
+}
+
+.widget-menubar > revealer * {
+  margin-top: 8px;
+}
+
+.widget-menubar > revealer * button {
+  border-radius: var(--border-radius);
+  margin: 8px;
+  margin-top: 0;
+}
+
+.widget-menubar > revealer * button:last-child {
+  margin-bottom: 0;
+}
+
+/* Volume widget */
+:root {
+  --widget-volume-row-icon-size: 24px;
+}
+
+/* Each row app icon */
+.widget-volume row image {
+  -gtk-icon-size: var(--widget-volume-row-icon-size);
+}
+
+.per-app-volume {
+  background-color: var(--noti-bg-alt);
+  margin: 8px;
+  margin-bottom: 0;
+  border-radius: var(--border-radius);
+}
+
+/* Slider widget */
+.widget-slider label {
+  font-size: inherit;
+}
+
+/* Backlight widget */
+/* Inhibitors widget */
+.widget-inhibitors > label {
+  margin-right: 8px;
+  font-size: 1.5rem;
+}
+
+.widget-inhibitors > button {
+  margin-left: 8px;
+  border-radius: var(--border-radius);
+}
+
+/* === Bigger Nerd Font Icons for Volume & Brightness Labels === */
+
+.widget-volume label:first-child,
+.widget-backlight label:first-child {
+  font-size: 1.5rem;     /* increase or tweak: try 2rem if you want even bigger */
+  line-height: 1.2;
+  margin-right: 10px;
+  color: var(--text-color); /* keeps same color as text */
+}
+
+/* Make sure it aligns nicely with the slider */
+.widget-volume,
+.widget-backlight {
+  padding: 10px 14px;
+}
+
+.widget-volume trough highlight,
+.widget-backlight trough highlight{
+  background-color: var(--bg-selected);
+}
+
+/* --- Balance button-grid alignment & spacing --- */
+.widget-buttons-grid flowboxchild > button {
+  border-radius: 25px;
+  transition: background 0.2s ease;
+}
+
+.widget-buttons-grid flowboxchild > button.toggle:checked {
+  background: rgb(129,162,190);
+  /* box-shadow: 0 0 6px rgba(247, 27, 229, 0.5); */
+  border: 2px solid var(--border-selected);
+}
+
+.widget-buttons-grid flowboxchild > button.toggle:hover {
+  filter: brightness(1.1);
+}
+
+.widget-buttons-grid flowboxchild > button label {
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.80)
+}
+
+/* --- FIX: Targeted Padding for Wi-Fi and Hyprsunset Icons --- */
+.widget-buttons-grid flowboxchild:nth-child(5) > button label,
+.widget-buttons-grid flowboxchild:nth-child(7) > button label {
+    /* Apply the padding-right to both selected icons */
+    padding-right: 8px;
+}
+
+/* 2. Targets the Hypridle Button (4th child in the grid) */
+.widget-buttons-grid flowboxchild:nth-child(8) > button label {
+    /* Pushes the icon 3 pixels to the left. Adjust '2px' as needed. */
+    padding-right: 3px;
+}
+
+/* =========================================================
+   Force equal button size for ALL buttons-grid buttons
+   ========================================================= */
+
+/* Actual button */
+.widget-buttons-grid flowboxchild > button {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+/* Toggle buttons (checked / unchecked) */
+.widget-buttons-grid flowboxchild > button.toggle {
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 999px;
+}
+
+/* Target the first 4 buttons (System Actions) in the grid */
+.widget-buttons-grid flowboxchild:nth-child(-n+4) > button {
+  background: var(--bg-selected-alt);
+  border: 2px solid var(--border-selected-alt);
+}
+
+.widget-buttons-grid flowboxchild:nth-child(-n+4) > button:hover {
+  filter: brightness(1.1)
 }
